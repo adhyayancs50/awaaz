@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 interface AudioWaveformProps {
   isRecording: boolean;
@@ -8,19 +8,47 @@ interface AudioWaveformProps {
 
 const AudioWaveform: React.FC<AudioWaveformProps> = ({ isRecording, isPaused }) => {
   const bars = 5;
+  const waveRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    if (!waveRef.current) return;
+    
+    const barElements = Array.from(waveRef.current.querySelectorAll('.bar'));
+    if (!isRecording || isPaused) {
+      barElements.forEach(bar => {
+        const htmlBar = bar as HTMLElement;
+        htmlBar.style.height = '12px';
+        htmlBar.style.opacity = isPaused ? '0.5' : '1';
+      });
+      return;
+    }
+    
+    const animate = () => {
+      if (!waveRef.current || !isRecording || isPaused) return;
+      
+      barElements.forEach(bar => {
+        const htmlBar = bar as HTMLElement;
+        const height = Math.floor(Math.random() * 30) + 5;
+        htmlBar.style.height = `${height}px`;
+      });
+      
+      requestAnimationFrame(animate);
+    };
+    
+    const animationFrame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [isRecording, isPaused]);
   
   return (
-    <div className="flex items-center justify-center gap-1 h-12">
+    <div ref={waveRef} className="audio-wave-animation">
       {Array.from({ length: bars }).map((_, index) => (
         <div
           key={index}
-          className={`w-2 bg-primary rounded-full transition-all ${
-            isRecording && !isPaused
-              ? `animate-wave-${index + 1}`
-              : "h-3"
+          className={`bar transition-all duration-300 ${
+            isRecording && !isPaused ? "" : ""
           }`}
           style={{ 
-            height: isRecording && !isPaused ? `${Math.random() * 30 + 10}px` : "12px",
+            height: "12px",
             opacity: isPaused ? 0.5 : 1
           }}
         />

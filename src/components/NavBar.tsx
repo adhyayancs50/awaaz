@@ -12,9 +12,13 @@ export const NavBar: React.FC = () => {
     <header className="border-b bg-white shadow-sm">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <span className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-sm font-bold text-white">A</span>
-          </span>
+          <div className="w-9 h-9 flex items-center justify-center">
+            <img 
+              src="/lovable-uploads/72311bbf-01ec-4d7d-85b1-df143c27ae7f.png" 
+              alt="AWAaz Logo" 
+              className="w-full h-full object-contain"
+            />
+          </div>
           <span className="text-xl font-bold font-poppins text-primary">AWAaz</span>
         </Link>
         

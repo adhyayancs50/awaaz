@@ -30,8 +30,12 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinished }) => {
           transition={{ duration: 0.8, type: "spring" }}
           className="mb-6"
         >
-          <div className="w-32 h-32 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-5xl font-poppins font-bold text-white">A</span>
+          <div className="w-40 h-40 flex items-center justify-center">
+            <img 
+              src="/lovable-uploads/72311bbf-01ec-4d7d-85b1-df143c27ae7f.png" 
+              alt="AWAaz Logo" 
+              className="w-full h-full object-contain"
+            />
           </div>
         </motion.div>
         
