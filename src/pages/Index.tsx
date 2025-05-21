@@ -1,12 +1,12 @@
 
 import { useAuth } from "@/contexts/AuthContext";
-import HomePage from "./HomePage";
+import RecordPage from "./RecordPage";
 import AuthForm from "@/components/AuthForm";
 
 const Index = () => {
   const { user } = useAuth();
   
-  return user?.isLoggedIn ? <HomePage /> : <AuthForm />;
+  return user?.isLoggedIn ? <RecordPage /> : <AuthForm />;
 };
 
 export default Index;
