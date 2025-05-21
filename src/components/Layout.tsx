@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { NavBar } from "@/components/NavBar";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FileAudio, Book, Settings, Languages } from "lucide-react";
+import { Home, FileAudio, Book, Settings, Languages } from "lucide-react";
 import { useTranslation } from "@/contexts/TranslationContext";
 
 interface LayoutProps {
@@ -28,7 +28,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             className="w-full max-w-md"
             onValueChange={(value) => navigate(value)}
           >
-            <TabsList className="grid w-full grid-cols-4 p-1 bg-neutral-sand rounded-lg">
+            <TabsList className="grid w-full grid-cols-5 p-1 bg-neutral-sand rounded-lg">
+              <TabsTrigger value="/home" className="data-[state=active]:bg-white flex gap-2 items-center">
+                <Home className="w-4 h-4" />
+                <span>{t("home")}</span>
+              </TabsTrigger>
               <TabsTrigger value="/" className="data-[state=active]:bg-white flex gap-2 items-center">
                 <FileAudio className="w-4 h-4" />
                 <span>{t("record")}</span>
