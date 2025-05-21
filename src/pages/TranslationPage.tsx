@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import EmptyState from "@/components/EmptyState";
 import { motion } from "framer-motion";
@@ -26,10 +27,11 @@ const TranslationPage: React.FC = () => {
   const { toast } = useToast();
   
   const [selectedRecordingId, setSelectedRecordingId] = useState<string | null>(null);
-  const [targetLanguage, setTargetLanguage] = useState<TranslationLanguage>(TranslationLanguage.HINDI);
+  const [targetLanguage, setTargetLanguage] = useState<TranslationLanguage>(TranslationLanguage.ENGLISH);
   const [translationText, setTranslationText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [availableRecordings, setAvailableRecordings] = useState<Recording[]>([]);
+  const [activeTab, setActiveTab] = useState<"available" | "myTasks" | "completed">("available");
   
   // Filter recordings that are available for translation
   useEffect(() => {
@@ -122,11 +124,12 @@ const TranslationPage: React.FC = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <h1 className="text-3xl font-bold mb-6 text-center">{t("translate")}</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center text-primary">{t("translate")}</h1>
+      <p className="text-center text-muted-foreground mb-6">{t("translationInstructions")}</p>
       
-      <Card className="mb-6">
+      <Card className="mb-6 shadow-md border-green-100">
         <CardHeader>
-          <CardTitle>{t("translationInstructions")}</CardTitle>
+          <CardTitle>{t("targetLanguage")}</CardTitle>
           <CardDescription>{t("selectTranslationLanguage")}</CardDescription>
         </CardHeader>
         <CardContent>
@@ -134,7 +137,7 @@ const TranslationPage: React.FC = () => {
             value={targetLanguage}
             onValueChange={(value) => setTargetLanguage(value as TranslationLanguage)}
           >
-            <SelectTrigger className="w-full mb-4 border-green-300">
+            <SelectTrigger className="w-full mb-4 border-green-300 focus:ring-green-500">
               <SelectValue placeholder={t("translateTo")} />
             </SelectTrigger>
             <SelectContent>
@@ -142,28 +145,63 @@ const TranslationPage: React.FC = () => {
               <SelectItem value={TranslationLanguage.ENGLISH}>{t("english")}</SelectItem>
             </SelectContent>
           </Select>
-          
-          {availableRecordings.length > 0 ? (
-            <Select
-              value={selectedRecordingId || ""}
-              onValueChange={setSelectedRecordingId}
-            >
-              <SelectTrigger className="w-full border-green-300">
-                <SelectValue placeholder={t("selectRecording")} />
-              </SelectTrigger>
-              <SelectContent>
-                {availableRecordings.map(recording => (
-                  <SelectItem key={recording.id} value={recording.id}>
-                    {recording.title} 
-                    {recording.language && ` (${recording.language})`}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          ) : (
-            <p className="text-muted-foreground text-center py-4">{t("noRecordingsToTranslate")}</p>
-          )}
         </CardContent>
+      </Card>
+      
+      <Card className="mb-6 shadow-md border-green-100 overflow-hidden">
+        <Tabs defaultValue="available" className="w-full" onValueChange={(value) => setActiveTab(value as any)}>
+          <TabsList className="grid w-full grid-cols-3 bg-neutral-light">
+            <TabsTrigger 
+              value="available"
+              className="data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm"
+            >
+              {t("availableTasks")}
+            </TabsTrigger>
+            <TabsTrigger 
+              value="myTasks"
+              className="data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm"
+            >
+              {t("myTasks")}
+            </TabsTrigger>
+            <TabsTrigger 
+              value="completed"
+              className="data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm"
+            >
+              {t("completed")}
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="available" className="p-4">
+            {availableRecordings.length > 0 ? (
+              <Select
+                value={selectedRecordingId || ""}
+                onValueChange={setSelectedRecordingId}
+              >
+                <SelectTrigger className="w-full border-green-300">
+                  <SelectValue placeholder={t("selectRecording")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableRecordings.map(recording => (
+                    <SelectItem key={recording.id} value={recording.id}>
+                      {recording.title} 
+                      {recording.language && ` (${recording.language})`}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <p className="text-muted-foreground text-center py-4">{t("noRecordingsToTranslate")}</p>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="myTasks" className="p-4">
+            <p className="text-muted-foreground text-center py-6">{t("noAssignedTranslations")}</p>
+          </TabsContent>
+          
+          <TabsContent value="completed" className="p-4">
+            <p className="text-muted-foreground text-center py-6">{t("noCompletedTranslations")}</p>
+          </TabsContent>
+        </Tabs>
       </Card>
       
       {selectedRecording && (
@@ -172,9 +210,9 @@ const TranslationPage: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <Card className="mb-6">
+          <Card className="mb-6 shadow-md border-green-100">
             <CardHeader>
-              <CardTitle>{selectedRecording.title}</CardTitle>
+              <CardTitle className="text-lg">{selectedRecording.title}</CardTitle>
               <CardDescription>
                 {selectedRecording.language && `${t("language")}: ${selectedRecording.language}`}
                 {selectedRecording.speaker && ` • ${t("speaker")}: ${selectedRecording.speaker}`}
@@ -186,15 +224,15 @@ const TranslationPage: React.FC = () => {
               {selectedRecording.transcription && (
                 <div className="mt-4">
                   <h3 className="font-medium mb-1">{t("originalTranscription")}:</h3>
-                  <p className="p-3 bg-gray-50 rounded border">{selectedRecording.transcription}</p>
+                  <p className="p-3 bg-neutral-50 rounded border">{selectedRecording.transcription}</p>
                 </div>
               )}
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="shadow-md border-green-100">
             <CardHeader>
-              <CardTitle>
+              <CardTitle className="text-lg">
                 {targetLanguage === TranslationLanguage.HINDI
                   ? t("translateToHindi")
                   : t("translateToEnglish")}
@@ -213,7 +251,7 @@ const TranslationPage: React.FC = () => {
               <Button 
                 onClick={handleSubmitTranslation} 
                 disabled={isSubmitting || !translationText.trim()}
-                className="w-full bg-green-600 hover:bg-green-700"
+                className="w-full bg-primary hover:bg-primary/90"
               >
                 {isSubmitting ? t("submitting") : t("submitTranslation")}
               </Button>
