@@ -5,7 +5,7 @@ import { useTranslation } from "@/contexts/TranslationContext";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
-import { Menu, Language } from "lucide-react";
+import { Menu, Languages } from "lucide-react";
 import { 
   DropdownMenu,
   DropdownMenuContent,

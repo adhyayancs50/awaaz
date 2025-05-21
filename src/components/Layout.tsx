@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { NavBar } from "@/components/NavBar";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FileAudio, Book, Settings, Language } from "lucide-react";
+import { FileAudio, Book, Settings, Languages } from "lucide-react";
 import { useTranslation } from "@/contexts/TranslationContext";
 
 interface LayoutProps {
@@ -38,7 +38,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <span>{t("archive")}</span>
               </TabsTrigger>
               <TabsTrigger value="/translate" className="data-[state=active]:bg-white flex gap-2 items-center">
-                <Language className="w-4 h-4" />
+                <Languages className="w-4 h-4" />
                 <span>{t("translate")}</span>
               </TabsTrigger>
               <TabsTrigger value="/settings" className="data-[state=active]:bg-white flex gap-2 items-center">
