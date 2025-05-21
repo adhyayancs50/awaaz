@@ -26,6 +26,23 @@ const translations = {
     loggingIn: "Logging in...",
     creating: "Creating...",
     
+    // Home Page
+    welcomeMessage: "Help preserve linguistic heritage by recording, archiving, and translating languages",
+    startRecording: "Start Recording",
+    recordDescription: "Capture voices, stories, and songs in endangered languages",
+    browseArchive: "Browse Digital Archive",
+    archiveDescription: "Explore the collection of recorded languages",
+    totalLanguagesRecorded: "Total recordings",
+    yourContributions: "Your contributions",
+    translateRecordings: "Translate Recordings",
+    translateDescription: "Help make languages accessible to broader audiences",
+    helpPreserve: "Contribute your translation skills to help preserve cultural context",
+    uploadManually: "Upload Manually",
+    uploadDescription: "Upload pre-recorded audio files",
+    uploadInstructions: "Select audio files from your device to add to the archive",
+    quickAccess: "Quick Access",
+    help: "Help & FAQs",
+    
     // Recording
     record: "Record",
     recordSentence: "Record a Sentence",
@@ -37,6 +54,7 @@ const translations = {
     resume: "Resume",
     stop: "Stop",
     startOver: "Start Over",
+    upload: "Upload",
     
     // Translation
     translate: "Translate",
@@ -108,7 +126,8 @@ const translations = {
     // Common
     signInToAccessSettings: "Sign in to access settings",
     createAccountOrSignIn: "Create an account or sign in to configure your preferences.",
-    updating: "Updating..."
+    updating: "Updating...",
+    user: "User"
   },
   hi: {
     // Auth
@@ -126,6 +145,23 @@ const translations = {
     loggingIn: "लॉग इन हो रहा है...",
     creating: "बना रहा है...",
     
+    // Home Page
+    welcomeMessage: "भाषाओं को रिकॉर्ड, संग्रह और अनुवाद करके भाषाई विरासत को संरक्षित करने में मदद करें",
+    startRecording: "रिकॉर्डिंग शुरू करें",
+    recordDescription: "लुप्तप्राय भाषाओं में आवाज़ें, कहानियां और गीत कैप्चर करें",
+    browseArchive: "डिजिटल आर्काइव ब्राउज़ करें",
+    archiveDescription: "रिकॉर्ड की गई भाषाओं के संग्रह का अन्वेषण करें",
+    totalLanguagesRecorded: "कुल रिकॉर्डिंग",
+    yourContributions: "आपका योगदान",
+    translateRecordings: "रिकॉर्डिंग का अनुवाद करें",
+    translateDescription: "भाषाओं को व्यापक दर्शकों तक पहुंचाने में मदद करें",
+    helpPreserve: "सांस्कृतिक संदर्भ को संरक्षित करने में मदद के लिए अपने अनुवाद कौशल का योगदान दें",
+    uploadManually: "मैन्युअल रूप से अपलोड करें",
+    uploadDescription: "पहले से रिकॉर्ड की गई ऑडियो फ़ाइलें अपलोड करें",
+    uploadInstructions: "आर्काइव में जोड़ने के लिए अपने डिवाइस से ऑडियो फ़ाइलें चुनें",
+    quickAccess: "त्वरित पहुंच",
+    help: "सहायता और अक्सर पूछे जाने वाले प्रश्न",
+    
     // Recording
     record: "रिकॉर्ड",
     recordSentence: "एक वाक्य रिकॉर्ड करें",
@@ -137,6 +173,7 @@ const translations = {
     resume: "जारी रखें",
     stop: "बंद करें",
     startOver: "फिर से शुरू करें",
+    upload: "अपलोड करें",
     
     // Translation
     translate: "अनुवाद",
@@ -208,7 +245,8 @@ const translations = {
     // Common
     signInToAccessSettings: "सेटिंग्स तक पहुंचने के लिए साइन इन करें",
     createAccountOrSignIn: "अपनी प्राथमिकताओं को कॉन्फ़िगर करने के लिए एक खाता बनाएं या साइन इन करें।",
-    updating: "अपडेट हो रहा है..."
+    updating: "अपडेट हो रहा है...",
+    user: "उपयोगकर्ता"
   }
 };
 
