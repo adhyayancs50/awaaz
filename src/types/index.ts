@@ -28,6 +28,8 @@ export interface Recording {
   date: string;
   language?: string;
   speaker?: string;
+  tribe?: string;
+  region?: string;
   transcription?: string;
   translations?: {
     [key in TranslationLanguage]?: string;
