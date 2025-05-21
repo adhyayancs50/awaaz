@@ -8,20 +8,21 @@ import { Label } from "@/components/ui/label";
 import { RecordingFormData, ContentType } from "@/types";
 import AudioPlayer from "@/components/AudioPlayer";
 import { useToast } from "@/components/ui/use-toast";
+import { useTranslation } from "@/contexts/TranslationContext";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const RecordingForm: React.FC = () => {
   const { recorderState, audioUrl, recordingData, resetRecording } = useRecorder();
   const { addRecording } = useRecordings();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState<RecordingFormData>({
     title: "",
     contentType: recorderState.contentType || ContentType.WORD,
-    tribe: "",
     language: "",
-    region: "",
     speaker: "",
   });
   
@@ -35,8 +36,8 @@ const RecordingForm: React.FC = () => {
     
     if (!audioUrl || !recordingData) {
       toast({
-        title: "Recording not found",
-        description: "Please record audio before saving",
+        title: t("error"),
+        description: t("recordingNotFound"),
         variant: "destructive",
       });
       return;
@@ -44,8 +45,8 @@ const RecordingForm: React.FC = () => {
     
     if (!formData.title.trim()) {
       toast({
-        title: "Title required",
-        description: "Please provide a title for your recording",
+        title: t("error"),
+        description: t("titleRequired"),
         variant: "destructive",
       });
       return;
@@ -56,9 +57,7 @@ const RecordingForm: React.FC = () => {
       contentType: formData.contentType,
       audioUrl: audioUrl,
       duration: recorderState.duration,
-      tribe: formData.tribe,
       language: formData.language,
-      region: formData.region,
       speaker: formData.speaker,
     });
     
@@ -71,8 +70,13 @@ const RecordingForm: React.FC = () => {
   }
   
   return (
-    <div className="animate-fade-in">
-      <h2 className="text-2xl font-bold mb-6 text-center">Save Your Recording</h2>
+    <motion.div 
+      className="animate-fade-in"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <h2 className="text-2xl font-bold mb-6 text-center">{t("saveYourRecording")}</h2>
       
       <div className="mb-6">
         <AudioPlayer audioUrl={audioUrl} />
@@ -80,70 +84,60 @@ const RecordingForm: React.FC = () => {
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <Label htmlFor="title">Title (Required)</Label>
+          <Label htmlFor="title">{t("title")} ({t("required")})</Label>
           <Input
             id="title"
             name="title"
             value={formData.title}
             onChange={handleChange}
-            placeholder="Give your recording a title"
+            placeholder={t("recordingTitle")}
             required
+            className="border-green-300 focus:border-green-500 focus:ring-green-500"
           />
         </div>
         
         <div>
-          <Label htmlFor="language">Language</Label>
+          <Label htmlFor="language">{t("language")}</Label>
           <Input
             id="language"
             name="language"
             value={formData.language}
             onChange={handleChange}
-            placeholder="Language name"
+            placeholder={t("languageName")}
+            className="border-green-300 focus:border-green-500 focus:ring-green-500"
           />
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="tribe">Tribe/Community</Label>
-            <Input
-              id="tribe"
-              name="tribe"
-              value={formData.tribe}
-              onChange={handleChange}
-              placeholder="Tribe or community name"
-            />
-          </div>
-          <div>
-            <Label htmlFor="region">Region</Label>
-            <Input
-              id="region"
-              name="region"
-              value={formData.region}
-              onChange={handleChange}
-              placeholder="Geographic region"
-            />
-          </div>
-        </div>
-        
         <div>
-          <Label htmlFor="speaker">Speaker</Label>
+          <Label htmlFor="speaker">{t("speaker")}</Label>
           <Input
             id="speaker"
             name="speaker"
             value={formData.speaker}
             onChange={handleChange}
-            placeholder="Name of the speaker"
+            placeholder={t("speakerName")}
+            className="border-green-300 focus:border-green-500 focus:ring-green-500"
           />
         </div>
         
         <div className="flex justify-between pt-4">
-          <Button type="button" variant="outline" onClick={resetRecording}>
-            Discard
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={resetRecording}
+            className="border-green-500 text-green-600 hover:bg-green-50"
+          >
+            {t("discard")}
           </Button>
-          <Button type="submit">Save Recording</Button>
+          <Button 
+            type="submit" 
+            className="bg-green-600 hover:bg-green-700"
+          >
+            {t("saveRecording")}
+          </Button>
         </div>
       </form>
-    </div>
+    </motion.div>
   );
 };
 

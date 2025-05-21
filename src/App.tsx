@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import RecordPage from "./pages/RecordPage";
 import ArchivePage from "./pages/ArchivePage";
 import SettingsPage from "./pages/SettingsPage";
+import TranslationPage from "./pages/TranslationPage";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 import SplashScreen from "./components/SplashScreen";
@@ -16,6 +17,8 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { RecordingProvider } from "./contexts/RecordingContext";
 import { SettingsProvider } from "./contexts/SettingsContext";
 import { RecorderProvider } from "./contexts/RecorderContext";
+import { TranslationProvider } from "./contexts/TranslationContext";
+import { AnimatePresence } from "framer-motion";
 
 const queryClient = new QueryClient();
 
@@ -28,32 +31,37 @@ const App = () => {
   
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <SettingsProvider>
-          <RecordingProvider>
-            <RecorderProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                {showSplash ? (
-                  <SplashScreen onFinished={handleSplashFinished} />
-                ) : (
-                  <BrowserRouter>
-                    <Layout>
-                      <Routes>
-                        <Route path="/" element={<RecordPage />} />
-                        <Route path="/archive" element={<ArchivePage />} />
-                        <Route path="/settings" element={<SettingsPage />} />
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </Layout>
-                  </BrowserRouter>
-                )}
-              </TooltipProvider>
-            </RecorderProvider>
-          </RecordingProvider>
-        </SettingsProvider>
-      </AuthProvider>
+      <TranslationProvider>
+        <AuthProvider>
+          <SettingsProvider>
+            <RecordingProvider>
+              <RecorderProvider>
+                <TooltipProvider>
+                  <Toaster />
+                  <Sonner />
+                  {showSplash ? (
+                    <SplashScreen onFinished={handleSplashFinished} />
+                  ) : (
+                    <BrowserRouter>
+                      <AnimatePresence mode="wait">
+                        <Layout>
+                          <Routes>
+                            <Route path="/" element={<RecordPage />} />
+                            <Route path="/archive" element={<ArchivePage />} />
+                            <Route path="/translate" element={<TranslationPage />} />
+                            <Route path="/settings" element={<SettingsPage />} />
+                            <Route path="*" element={<NotFound />} />
+                          </Routes>
+                        </Layout>
+                      </AnimatePresence>
+                    </BrowserRouter>
+                  )}
+                </TooltipProvider>
+              </RecorderProvider>
+            </RecordingProvider>
+          </SettingsProvider>
+        </AuthProvider>
+      </TranslationProvider>
     </QueryClientProvider>
   );
 };

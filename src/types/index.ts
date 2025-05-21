@@ -1,6 +1,6 @@
 
 export enum ContentType {
-  WORD = "word",
+  WORD = "word", // Renamed to "sentence" in UI but keeping enum the same for compatibility
   STORY = "story",
   SONG = "song"
 }
@@ -16,8 +16,6 @@ export interface User {
   name: string;
   email: string;
   photoURL?: string;
-  tribe?: string;
-  region?: string;
   isLoggedIn: boolean;
 }
 
@@ -28,9 +26,7 @@ export interface Recording {
   audioUrl: string;
   duration: number;
   date: string;
-  tribe?: string;
   language?: string;
-  region?: string;
   speaker?: string;
   transcription?: string;
   translations?: {
@@ -56,8 +52,6 @@ export interface RecorderState {
 export interface RecordingFormData {
   title: string;
   contentType: ContentType;
-  tribe?: string;
   language?: string;
-  region?: string;
   speaker?: string;
 }

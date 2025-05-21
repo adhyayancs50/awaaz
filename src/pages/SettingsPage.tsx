@@ -3,54 +3,84 @@ import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRecordings } from "@/contexts/RecordingContext";
 import { useSettings } from "@/contexts/SettingsContext";
+import { useTranslation } from "@/contexts/TranslationContext";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import EmptyState from "@/components/EmptyState";
 import { toast } from "@/components/ui/use-toast";
 
 const SettingsPage: React.FC = () => {
-  const { user, login } = useAuth();
+  const { user, logout, updateDisplayName, deleteAccount } = useAuth();
   const { syncRecordings } = useRecordings();
   const { syncOptions, updateSyncOptions } = useSettings();
+  const { t, currentLanguage, setLanguage } = useTranslation();
   
   const [isUpdating, setIsUpdating] = useState(false);
-  const [profileData, setProfileData] = useState({
-    tribe: user?.tribe || "",
-    region: user?.region || "",
-  });
+  const [displayName, setDisplayName] = useState(user?.name || "");
   
   const handleSyncOptionsChange = (key: keyof typeof syncOptions, value: boolean) => {
     updateSyncOptions({ [key]: value });
   };
   
-  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setProfileData(prev => ({ ...prev, [name]: value }));
-  };
-  
-  const handleProfileUpdate = () => {
+  const handleDisplayNameUpdate = () => {
+    if (!displayName.trim()) {
+      toast({
+        title: t("error"),
+        description: t("displayNameRequired"),
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsUpdating(true);
     
-    // Mock API call
-    setTimeout(() => {
-      // This is where we would update the user profile in a real app
+    try {
+      updateDisplayName(displayName);
       toast({
-        title: "Profile updated",
-        description: "Your profile information has been saved",
+        title: t("success"),
+        description: t("displayNameUpdated"),
       });
+    } catch (error) {
+      console.error("Failed to update display name:", error);
+      toast({
+        title: t("error"),
+        description: t("updateFailed"),
+        variant: "destructive",
+      });
+    } finally {
       setIsUpdating(false);
-    }, 1000);
+    }
+  };
+  
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteAccount();
+      // Navigation happens automatically due to auth state change
+    } catch (error) {
+      console.error("Failed to delete account:", error);
+    }
   };
   
   if (!user?.isLoggedIn) {
     return (
       <EmptyState
-        title="Sign in to access settings"
-        description="Create an account or sign in to configure your preferences."
+        title={t("signInToAccessSettings")}
+        description={t("createAccountOrSignIn")}
         icon="⚙️"
       />
     );
@@ -58,13 +88,13 @@ const SettingsPage: React.FC = () => {
   
   return (
     <div className="max-w-md mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center">Settings</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">{t("settings")}</h1>
       
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Profile</CardTitle>
-            <CardDescription>Manage your personal information</CardDescription>
+            <CardTitle>{t("profile")}</CardTitle>
+            <CardDescription>{t("manageYourInfo")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-4">
@@ -81,45 +111,70 @@ const SettingsPage: React.FC = () => {
             
             <div className="space-y-2">
               <div>
-                <Label htmlFor="tribe">Tribe/Community</Label>
+                <Label htmlFor="displayName">{t("displayName")}</Label>
                 <Input
-                  id="tribe"
-                  name="tribe"
-                  value={profileData.tribe}
-                  onChange={handleProfileChange}
-                  placeholder="Your tribe or community"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="region">Region</Label>
-                <Input
-                  id="region"
-                  name="region"
-                  value={profileData.region}
-                  onChange={handleProfileChange}
-                  placeholder="Your geographic region"
+                  id="displayName"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  placeholder={t("yourName")}
                 />
               </div>
             </div>
           </CardContent>
-          <CardFooter>
-            <Button onClick={handleProfileUpdate} disabled={isUpdating}>
-              {isUpdating ? "Updating..." : "Update Profile"}
+          <CardFooter className="flex justify-between">
+            <Button onClick={handleDisplayNameUpdate} disabled={isUpdating}>
+              {isUpdating ? t("updating") : t("updateProfile")}
             </Button>
+            
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive">{t("deleteAccount")}</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{t("areYouSure")}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {t("deleteAccountWarning")}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDeleteAccount}>
+                    {t("deleteAccount")}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </CardFooter>
         </Card>
         
         <Card>
           <CardHeader>
-            <CardTitle>Sync Settings</CardTitle>
-            <CardDescription>Configure how your recordings are synchronized</CardDescription>
+            <CardTitle>{t("language")}</CardTitle>
+            <CardDescription>{t("chooseYourLanguage")}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="language-switch">{t("useHindi")}</Label>
+              <Switch
+                id="language-switch"
+                checked={currentLanguage === "hi"}
+                onCheckedChange={(checked) => setLanguage(checked ? "hi" : "en")}
+              />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("syncSettings")}</CardTitle>
+            <CardDescription>{t("configureSync")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <Label htmlFor="wifi-only">Sync only on Wi-Fi</Label>
-                <p className="text-sm text-muted-foreground">Save mobile data by only syncing on Wi-Fi networks</p>
+                <Label htmlFor="wifi-only">{t("syncOnWifiOnly")}</Label>
+                <p className="text-sm text-muted-foreground">{t("saveMobileData")}</p>
               </div>
               <Switch
                 id="wifi-only"
@@ -130,8 +185,8 @@ const SettingsPage: React.FC = () => {
             
             <div className="flex items-center justify-between">
               <div>
-                <Label htmlFor="auto-sync">Auto Sync</Label>
-                <p className="text-sm text-muted-foreground">Automatically sync recordings when online</p>
+                <Label htmlFor="auto-sync">{t("autoSync")}</Label>
+                <p className="text-sm text-muted-foreground">{t("autoSyncDescription")}</p>
               </div>
               <Switch
                 id="auto-sync"
@@ -142,18 +197,18 @@ const SettingsPage: React.FC = () => {
           </CardContent>
           <CardFooter>
             <Button onClick={() => syncRecordings()}>
-              Sync Now
+              {t("syncNow")}
             </Button>
           </CardFooter>
         </Card>
         
         <Card>
           <CardHeader>
-            <CardTitle>About AWAaz</CardTitle>
+            <CardTitle>{t("aboutAWAaz")}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              AWAaz is dedicated to preserving endangered tribal languages in India through voice recording, transcription, and translation. Your contributions help build a valuable archive of linguistic heritage.
+              {t("aboutAWAazDescription")}
             </p>
           </CardContent>
           <CardFooter>
