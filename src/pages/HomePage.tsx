@@ -213,7 +213,6 @@ const HomePage = () => {
             variant="outline" 
             size="sm" 
             className="flex items-center gap-2"
-            onClick={() => navigate("/about")}
           >
             <Info className="w-4 h-4" /> {t("aboutAWAaz")}
           </Button>

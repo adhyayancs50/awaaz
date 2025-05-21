@@ -5,7 +5,7 @@ import { useTranslation } from "@/contexts/TranslationContext";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
-import { Home, Menu, Languages } from "lucide-react";
+import { Menu, Languages } from "lucide-react";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -70,9 +70,6 @@ export const NavBar: React.FC = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem asChild>
-                    <Link to="/home">{t("home")}</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
                     <Link to="/">{t("record")}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
@@ -83,9 +80,6 @@ export const NavBar: React.FC = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to="/settings">{t("settings")}</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/about">{t("aboutAWAaz")}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={logout}>
                     {t("logout")}

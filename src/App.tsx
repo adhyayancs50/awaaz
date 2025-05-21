@@ -11,7 +11,6 @@ import RecordPage from "./pages/RecordPage";
 import ArchivePage from "./pages/ArchivePage";
 import SettingsPage from "./pages/SettingsPage";
 import TranslationPage from "./pages/TranslationPage";
-import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 import SplashScreen from "./components/SplashScreen";
@@ -54,7 +53,6 @@ const App = () => {
                             <Route path="/archive" element={<ArchivePage />} />
                             <Route path="/translate" element={<TranslationPage />} />
                             <Route path="/settings" element={<SettingsPage />} />
-                            <Route path="/about" element={<AboutPage />} />
                             <Route path="*" element={<NotFound />} />
                           </Routes>
                         </Layout>
