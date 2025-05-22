@@ -65,11 +65,13 @@ const UploadPage: React.FC = () => {
     const audioUrl = URL.createObjectURL(audioFile);
     
     // Add recording to the recordings context
+    // Adding a duration property (default to 0 for uploaded files since we can't easily determine duration)
     addRecording({
       title,
       language,
       contentType,
       audioUrl,
+      duration: 0, // Adding the missing duration property
       transcription: "",
       translations: {}
     });
