@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Menu, Languages } from "lucide-react";
 import { 
   DropdownMenu,
@@ -17,9 +17,14 @@ import { motion } from "framer-motion";
 export const NavBar: React.FC = () => {
   const { user, logout } = useAuth();
   const { t, currentLanguage, setLanguage } = useTranslation();
+  const navigate = useNavigate();
   
   const handleLanguageToggle = () => {
     setLanguage(currentLanguage === "en" ? "hi" : "en");
+  };
+  
+  const handleSignInClick = () => {
+    navigate("/settings");
   };
   
   return (
@@ -94,11 +99,12 @@ export const NavBar: React.FC = () => {
               </DropdownMenu>
             </div>
           ) : (
-            <Link to="/settings">
-              <Button className="bg-green-600 hover:bg-green-700 transition-colors">
-                {t("signIn")}
-              </Button>
-            </Link>
+            <Button 
+              className="bg-green-600 hover:bg-green-700 transition-colors"
+              onClick={handleSignInClick}
+            >
+              {t("signIn")}
+            </Button>
           )}
         </div>
       </div>

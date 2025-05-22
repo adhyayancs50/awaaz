@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,10 +21,17 @@ import { RecorderProvider } from "./contexts/RecorderContext";
 import { TranslationProvider } from "./contexts/TranslationContext";
 import { AnimatePresence } from "framer-motion";
 
+// Create a new QueryClient instance
 const queryClient = new QueryClient();
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
+  
+  // Apply global font styling
+  useEffect(() => {
+    // Add Poppins font to the document
+    document.body.classList.add('font-poppins');
+  }, []);
   
   const handleSplashFinished = () => {
     setShowSplash(false);

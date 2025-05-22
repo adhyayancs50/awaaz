@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User } from "@/types";
 import { toast } from "@/components/ui/use-toast";
@@ -60,9 +59,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       // Get users from localStorage
       const users = JSON.parse(localStorage.getItem("awaaz_users") || "[]");
-      const foundUser = users.find((u: any) => u.email === email && u.password === password);
+      const foundUser = users.find((u: any) => u.email === email);
       
       if (!foundUser) {
+        throw new Error("Invalid credentials");
+      }
+      
+      // Check password
+      if (foundUser.password !== password) {
         throw new Error("Invalid credentials");
       }
       
@@ -145,7 +149,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
-    // Important: Don't remove user data, just log them out by removing the session
+    // Only remove the current user session, not the user data
     setUser(null);
     localStorage.removeItem("awaaz_user");
     toast({

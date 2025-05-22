@@ -1,12 +1,15 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useRecorder } from "@/contexts/RecorderContext";
 import AudioWaveform from "@/components/AudioWaveform";
 import { formatTime } from "@/lib/utils";
 import { ContentType } from "@/types";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { motion } from "framer-motion";
+import { toast } from "@/components/ui/use-toast";
 
 const RecordingControls: React.FC = () => {
   const { 
@@ -19,10 +22,37 @@ const RecordingControls: React.FC = () => {
   } = useRecorder();
   const { t } = useTranslation();
   
+  const [language, setLanguage] = useState("");
+  const [showLanguagePrompt, setShowLanguagePrompt] = useState(false);
+  const [selectedContentType, setSelectedContentType] = useState<ContentType | null>(null);
+  
   const { isRecording, isPaused, duration, contentType } = recorderState;
   
-  const handleStartRecording = async (type: ContentType) => {
-    await recordAudio(type);
+  const handleContentTypeSelection = (type: ContentType) => {
+    setSelectedContentType(type);
+    setShowLanguagePrompt(true);
+  };
+  
+  const handleStartRecording = async () => {
+    if (!language.trim()) {
+      toast({
+        title: t("error"),
+        description: t("languageRequired"),
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (selectedContentType) {
+      await recordAudio(selectedContentType);
+      setShowLanguagePrompt(false);
+    }
+  };
+  
+  const handleCancelLanguagePrompt = () => {
+    setShowLanguagePrompt(false);
+    setSelectedContentType(null);
+    setLanguage("");
   };
   
   return (
@@ -33,32 +63,67 @@ const RecordingControls: React.FC = () => {
       transition={{ duration: 0.3 }}
     >
       {!isRecording && !contentType ? (
-        <div className="flex flex-col gap-4 w-full max-w-xs">
-          <h2 className="text-lg font-medium text-center">{t("recordSentence")}</h2>
-          <div className="grid grid-cols-1 gap-3">
-            <Button 
-              variant="outline" 
-              className="h-16 text-lg border-2 border-green-600 hover:bg-green-50 text-green-700"
-              onClick={() => handleStartRecording(ContentType.WORD)}
-            >
-              {t("singleSentence")}
-            </Button>
-            <Button 
-              variant="outline"
-              className="h-16 text-lg border-2 border-green-600 hover:bg-green-50 text-green-700"
-              onClick={() => handleStartRecording(ContentType.STORY)}
-            >
-              {t("conversation")}
-            </Button>
-            <Button 
-              variant="outline"
-              className="h-16 text-lg border-2 border-green-600 hover:bg-green-50 text-green-700"
-              onClick={() => handleStartRecording(ContentType.SONG)}
-            >
-              {t("song")}
-            </Button>
-          </div>
-        </div>
+        <>
+          {showLanguagePrompt ? (
+            <div className="flex flex-col gap-4 w-full max-w-xs">
+              <h2 className="text-lg font-medium text-center">{t("enterLanguageName")}</h2>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="language">{t("language")} ({t("required")})</Label>
+                  <Input
+                    id="language"
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    placeholder={t("languageName")}
+                    className="border-green-300 focus:border-green-500 focus:ring-green-500"
+                  />
+                </div>
+                <div className="flex justify-between gap-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={handleCancelLanguagePrompt}
+                    className="flex-1"
+                  >
+                    {t("cancel")}
+                  </Button>
+                  <Button 
+                    onClick={handleStartRecording}
+                    className="flex-1 bg-green-600 hover:bg-green-700"
+                  >
+                    {t("startRecording")}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4 w-full max-w-xs">
+              <h2 className="text-lg font-medium text-center">{t("recordSentence")}</h2>
+              <div className="grid grid-cols-1 gap-3">
+                <Button 
+                  variant="outline" 
+                  className="h-16 text-lg border-2 border-green-600 hover:bg-green-50 text-green-700"
+                  onClick={() => handleContentTypeSelection(ContentType.WORD)}
+                >
+                  {t("singleSentence")}
+                </Button>
+                <Button 
+                  variant="outline"
+                  className="h-16 text-lg border-2 border-green-600 hover:bg-green-50 text-green-700"
+                  onClick={() => handleContentTypeSelection(ContentType.STORY)}
+                >
+                  {t("conversation")}
+                </Button>
+                <Button 
+                  variant="outline"
+                  className="h-16 text-lg border-2 border-green-600 hover:bg-green-50 text-green-700"
+                  onClick={() => handleContentTypeSelection(ContentType.SONG)}
+                >
+                  {t("song")}
+                </Button>
+              </div>
+            </div>
+          )}
+        </>
       ) : (
         <div className="flex flex-col items-center gap-5 w-full max-w-xs">
           <motion.div 

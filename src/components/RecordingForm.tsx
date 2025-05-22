@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRecorder } from "@/contexts/RecorderContext";
 import { useRecordings } from "@/contexts/RecordingContext";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,14 @@ const RecordingForm: React.FC = () => {
     speaker: "",
   });
   
+  // Set default language from localStorage if available
+  useEffect(() => {
+    const lastUsedLanguage = localStorage.getItem("awaaz_last_language");
+    if (lastUsedLanguage) {
+      setFormData(prev => ({ ...prev, language: lastUsedLanguage }));
+    }
+  }, []);
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -51,6 +59,18 @@ const RecordingForm: React.FC = () => {
       });
       return;
     }
+    
+    if (!formData.language.trim()) {
+      toast({
+        title: t("error"),
+        description: t("languageRequired"),
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Save the language preference for future recordings
+    localStorage.setItem("awaaz_last_language", formData.language);
     
     addRecording({
       title: formData.title,
@@ -97,13 +117,14 @@ const RecordingForm: React.FC = () => {
         </div>
         
         <div>
-          <Label htmlFor="language">{t("language")}</Label>
+          <Label htmlFor="language">{t("language")} ({t("required")})</Label>
           <Input
             id="language"
             name="language"
             value={formData.language}
             onChange={handleChange}
             placeholder={t("languageName")}
+            required
             className="border-green-300 focus:border-green-500 focus:ring-green-500"
           />
         </div>

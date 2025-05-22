@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Recording, ContentType, TranslationLanguage } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
@@ -58,8 +57,15 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Calculate real-time statistics based on recordings data
   const getStats = () => {
-    const languages = new Set(recordings.filter(rec => rec.language).map(rec => rec.language));
-    const uniqueContributors = new Set(recordings.map(rec => rec.userId));
+    // Get unique languages by filtering out empty strings and null values
+    const languages = new Set(recordings
+      .filter(rec => rec.language && rec.language.trim() !== "")
+      .map(rec => rec.language?.toLowerCase().trim()));
+    
+    // Get unique contributors
+    const uniqueContributors = new Set(recordings
+      .filter(rec => rec.userId && rec.userId.trim() !== "")
+      .map(rec => rec.userId));
     
     return {
       languages: languages.size,
@@ -90,7 +96,7 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     
     toast({
       title: "Recording saved",
-      description: "Your recording has been saved locally",
+      description: "Your recording has been saved successfully",
     });
   };
 

@@ -46,6 +46,7 @@ export const RecorderProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const recordAudio = async (contentType: ContentType) => {
     try {
+      // Request permission to access the microphone
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
       
