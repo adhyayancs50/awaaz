@@ -12,6 +12,7 @@ interface RecordingContextType {
   deleteRecording: (id: string) => void;
   isLoading: boolean;
   syncRecordings: () => Promise<void>;
+  getStats: () => { languages: number, recordings: number, contributors: number };
 }
 
 const RecordingContext = createContext<RecordingContextType>({
@@ -22,6 +23,7 @@ const RecordingContext = createContext<RecordingContextType>({
   deleteRecording: () => {},
   isLoading: true,
   syncRecordings: async () => {},
+  getStats: () => ({ languages: 0, recordings: 0, contributors: 0 }),
 });
 
 export const useRecordings = () => useContext(RecordingContext);
@@ -51,10 +53,20 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Save recordings to local storage whenever they change
   useEffect(() => {
-    if (recordings.length > 0) {
-      localStorage.setItem("awaaz_recordings", JSON.stringify(recordings));
-    }
+    localStorage.setItem("awaaz_recordings", JSON.stringify(recordings));
   }, [recordings]);
+
+  // Calculate real-time statistics based on recordings data
+  const getStats = () => {
+    const languages = new Set(recordings.filter(rec => rec.language).map(rec => rec.language));
+    const uniqueContributors = new Set(recordings.map(rec => rec.userId));
+    
+    return {
+      languages: languages.size,
+      recordings: recordings.length,
+      contributors: uniqueContributors.size
+    };
+  };
 
   const addRecording = (recordingData: Omit<Recording, "id" | "date" | "syncStatus" | "userId">) => {
     if (!user) {
@@ -171,7 +183,8 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       updateRecording, 
       deleteRecording, 
       isLoading,
-      syncRecordings
+      syncRecordings,
+      getStats
     }}>
       {children}
     </RecordingContext.Provider>

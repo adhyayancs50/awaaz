@@ -25,6 +25,8 @@ const translations = {
     yourName: "Your name",
     loggingIn: "Logging in...",
     creating: "Creating...",
+    guest: "Guest",
+    signIn: "Sign In",
     
     // Recording
     record: "Record",
@@ -108,7 +110,24 @@ const translations = {
     // Common
     signInToAccessSettings: "Sign in to access settings",
     createAccountOrSignIn: "Create an account or sign in to configure your preferences.",
-    updating: "Updating..."
+    updating: "Updating...",
+    
+    // Home Page
+    home: "Home",
+    startRecording: "Start Recording",
+    captureVoiceDescription: "Record songs, stories, or sentences in your tribal language",
+    browseArchive: "Browse Archive",
+    exploreRecordingsDescription: "Explore the digital archive of recordings",
+    translateRecording: "Translate Recording",
+    helpTranslateDescription: "Help preserve languages by translating recordings",
+    uploadRecording: "Upload Recording",
+    uploadExistingDescription: "Upload existing audio files to the archive",
+    communityStats: "Community Stats",
+    languagesArchived: "Languages Archived",
+    totalRecordings: "Total Recordings",
+    activeContributors: "Active Contributors",
+    learnAboutAWAaz: "Learn About AWAaz",
+    preserveLanguagesSubtitle: "Preserve cultural heritage through voice recording"
   },
   hi: {
     // Auth
@@ -125,6 +144,8 @@ const translations = {
     yourName: "आपका नाम",
     loggingIn: "लॉग इन हो रहा है...",
     creating: "बना रहा है...",
+    guest: "अतिथि",
+    signIn: "साइन इन करें",
     
     // Recording
     record: "रिकॉर्ड",
@@ -208,7 +229,24 @@ const translations = {
     // Common
     signInToAccessSettings: "सेटिंग्स तक पहुंचने के लिए साइन इन करें",
     createAccountOrSignIn: "अपनी प्राथमिकताओं को कॉन्फ़िगर करने के लिए एक खाता बनाएं या साइन इन करें।",
-    updating: "अपडेट हो रहा है..."
+    updating: "अपडेट हो रहा है...",
+    
+    // Home Page
+    home: "होम",
+    startRecording: "रिकॉर्डिंग शुरू करें",
+    captureVoiceDescription: "अपनी जनजातीय भाषा में गीत, कहानियां या वाक्य रिकॉर्ड करें",
+    browseArchive: "आर्काइव ब्राउज़ करें",
+    exploreRecordingsDescription: "रिकॉर्डिंग के डिजिटल आर्काइव का अन्वेषण करें",
+    translateRecording: "रिकॉर्डिंग अनुवाद करें",
+    helpTranslateDescription: "रिकॉर्डिंग का अनुवाद करके भाषाओं को संरक्षित करने में मदद करें",
+    uploadRecording: "रिकॉर्डिंग अपलोड करें",
+    uploadExistingDescription: "मौजूदा ऑडियो फ़ाइलों को आर्काइव में अपलोड करें",
+    communityStats: "समुदाय के आंकड़े",
+    languagesArchived: "संग्रहीत भाषाएँ",
+    totalRecordings: "कुल रिकॉर्डिंग",
+    activeContributors: "सक्रिय योगदानकर्ता",
+    learnAboutAWAaz: "AWAaz के बारे में जानें",
+    preserveLanguagesSubtitle: "आवाज़ रिकॉर्डिंग के माध्यम से सांस्कृतिक विरासत को संरक्षित करें"
   }
 };
 

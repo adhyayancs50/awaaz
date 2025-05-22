@@ -2,6 +2,7 @@
 import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/contexts/TranslationContext";
+import { useRecordings } from "@/contexts/RecordingContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -11,12 +12,10 @@ import { motion } from "framer-motion";
 const HomePage: React.FC = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const { getStats } = useRecordings();
 
-  const stats = {
-    languages: 24,
-    recordings: 450,
-    contributors: 67,
-  };
+  // Get real-time stats from recordings
+  const stats = getStats();
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -53,7 +52,7 @@ const HomePage: React.FC = () => {
           animate="visible" 
           variants={cardVariants}
         >
-          <Link to="/">
+          <Link to="/record">
             <Card className="h-full hover:bg-green-50 hover:shadow-md transition-all cursor-pointer border-green-200">
               <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                 <FileAudio className="h-12 w-12 text-green-600 mb-4" />

@@ -145,6 +145,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
+    // Important: Don't remove user data, just log them out by removing the session
     setUser(null);
     localStorage.removeItem("awaaz_user");
     toast({
@@ -183,12 +184,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const filteredUsers = users.filter((u: any) => u.id !== user.id);
       localStorage.setItem("awaaz_users", JSON.stringify(filteredUsers));
       
-      // Remove recordings associated with this user
-      const recordings = JSON.parse(localStorage.getItem("awaaz_recordings") || "[]");
-      const filteredRecordings = recordings.filter((rec: any) => rec.userId !== user.id);
-      localStorage.setItem("awaaz_recordings", JSON.stringify(filteredRecordings));
-      
-      // Clear current user session
+      // Remove current user session
       setUser(null);
       localStorage.removeItem("awaaz_user");
       
