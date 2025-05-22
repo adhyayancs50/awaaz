@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { NavBar } from "@/components/NavBar";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FileAudio, Book, Settings, Languages } from "lucide-react";
+import { Home, FileAudio, Book, Settings, Languages } from "lucide-react";
 import { useTranslation } from "@/contexts/TranslationContext";
 
 interface LayoutProps {
@@ -28,20 +28,24 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             className="w-full max-w-md"
             onValueChange={(value) => navigate(value)}
           >
-            <TabsList className="grid w-full grid-cols-4 p-1 bg-neutral-sand rounded-lg">
-              <TabsTrigger value="/" className="data-[state=active]:bg-white flex gap-2 items-center">
+            <TabsList className="grid w-full grid-cols-5 p-1 bg-green-100 rounded-lg">
+              <TabsTrigger value="/" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-2 items-center">
+                <Home className="w-4 h-4" />
+                <span>{t("home")}</span>
+              </TabsTrigger>
+              <TabsTrigger value="/record" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-2 items-center">
                 <FileAudio className="w-4 h-4" />
                 <span>{t("record")}</span>
               </TabsTrigger>
-              <TabsTrigger value="/archive" className="data-[state=active]:bg-white flex gap-2 items-center">
+              <TabsTrigger value="/archive" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-2 items-center">
                 <Book className="w-4 h-4" />
                 <span>{t("archive")}</span>
               </TabsTrigger>
-              <TabsTrigger value="/translate" className="data-[state=active]:bg-white flex gap-2 items-center">
+              <TabsTrigger value="/translate" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-2 items-center">
                 <Languages className="w-4 h-4" />
                 <span>{t("translate")}</span>
               </TabsTrigger>
-              <TabsTrigger value="/settings" className="data-[state=active]:bg-white flex gap-2 items-center">
+              <TabsTrigger value="/settings" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-2 items-center">
                 <Settings className="w-4 h-4" />
                 <span>{t("settings")}</span>
               </TabsTrigger>
@@ -54,9 +58,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {children}
       </main>
       
-      <footer className="py-6 bg-neutral-sand/40 text-center">
+      <footer className="py-6 bg-green-50 text-center">
         <div className="container mx-auto px-4">
-          <p className="text-sm text-secondary font-medium">AWAaz - From Forgotten To Forever</p>
+          <p className="text-sm text-green-700 font-medium">AWAaz - From Forgotten To Forever</p>
           <p className="text-xs text-muted-foreground mt-1">Preserving Cultural Heritage Through Voice</p>
         </div>
       </footer>

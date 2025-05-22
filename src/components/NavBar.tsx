@@ -47,12 +47,12 @@ export const NavBar: React.FC = () => {
           </motion.span>
         </Link>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <Button
             variant="ghost"
             size="sm"
             onClick={handleLanguageToggle}
-            className="text-green-700 hover:text-green-800 hover:bg-green-50"
+            className="text-green-700 hover:text-green-800 hover:bg-green-50 transition-colors"
           >
             {currentLanguage === "en" ? "हिंदी" : "English"}
           </Button>
@@ -68,20 +68,26 @@ export const NavBar: React.FC = () => {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem asChild>
-                    <Link to="/">{t("record")}</Link>
+                <DropdownMenuContent align="end" className="bg-white border-green-100">
+                  <DropdownMenuItem asChild className="hover:bg-green-50 cursor-pointer">
+                    <Link to="/">{t("home")}</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuItem asChild className="hover:bg-green-50 cursor-pointer">
+                    <Link to="/record">{t("record")}</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="hover:bg-green-50 cursor-pointer">
                     <Link to="/archive">{t("archive")}</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuItem asChild className="hover:bg-green-50 cursor-pointer">
                     <Link to="/translate">{t("translate")}</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuItem asChild className="hover:bg-green-50 cursor-pointer">
                     <Link to="/settings">{t("settings")}</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={logout}>
+                  <DropdownMenuItem asChild className="hover:bg-green-50 cursor-pointer">
+                    <Link to="/about">{t("aboutAWAaz")}</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={logout} className="hover:bg-green-50 cursor-pointer">
                     {t("logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>

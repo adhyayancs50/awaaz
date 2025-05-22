@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&family=Bitter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Nunito:wght@400;500;600;700&family=Bitter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -16,7 +16,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 11% 20%;
 
-    --primary: 9 53% 53%;
+    --primary: 152 55% 36%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 177 35% 28%;
@@ -33,7 +33,7 @@
 
     --border: 32 26% 86%;
     --input: 32 26% 86%;
-    --ring: 9 53% 53%;
+    --ring: 152 55% 36%;
 
     --radius: 0.75rem;
   }
@@ -48,7 +48,7 @@
     --popover: 222 11% 20%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 9 53% 53%;
+    --primary: 152 55% 36%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 177 35% 28%;
@@ -65,7 +65,7 @@
 
     --border: 217 33% 25%;
     --input: 217 33% 25%;
-    --ring: 9 53% 53%;
+    --ring: 152 55% 36%;
   }
 }
 
@@ -75,19 +75,23 @@
   }
   
   body {
-    @apply bg-neutral-light text-foreground font-nunito;
+    @apply bg-neutral-light text-foreground font-poppins;
   }
   
   h1, h2, h3, h4, h5 {
-    @apply font-bitter font-semibold tracking-wide;
+    @apply font-poppins font-semibold tracking-wide;
   }
 
   h6 {
-    @apply font-poppins font-semibold;
+    @apply font-poppins font-medium;
   }
   
   button {
     @apply rounded-lg transition-all duration-300 focus:ring-2 focus:ring-primary/50;
+  }
+
+  a {
+    @apply transition-colors duration-200;
   }
 }
 
@@ -105,7 +109,7 @@
   }
   
   .tribal-pattern {
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c75d4b' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232d8b61' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
 
   .audio-wave-animation {
@@ -133,5 +137,23 @@
   .audio-wave-animation .bar:nth-child(5) {
     animation-delay: -0.8s;
   }
+  
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+  
+  .hover-lift:hover {
+    @apply -translate-y-1 shadow-md;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-md hover:-translate-y-1;
+  }
 }
 
+@keyframes wave-audio {
+  0%, 100% { height: 60%; }
+  25% { height: 30%; }
+  50% { height: 80%; }
+  75% { height: 40%; }
+}

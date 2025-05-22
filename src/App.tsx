@@ -6,10 +6,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import HomePage from "./pages/HomePage";
 import RecordPage from "./pages/RecordPage";
 import ArchivePage from "./pages/ArchivePage";
 import SettingsPage from "./pages/SettingsPage";
 import TranslationPage from "./pages/TranslationPage";
+import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 import SplashScreen from "./components/SplashScreen";
@@ -46,10 +48,12 @@ const App = () => {
                       <AnimatePresence mode="wait">
                         <Layout>
                           <Routes>
-                            <Route path="/" element={<RecordPage />} />
+                            <Route path="/" element={<HomePage />} />
+                            <Route path="/record" element={<RecordPage />} />
                             <Route path="/archive" element={<ArchivePage />} />
                             <Route path="/translate" element={<TranslationPage />} />
                             <Route path="/settings" element={<SettingsPage />} />
+                            <Route path="/about" element={<AboutPage />} />
                             <Route path="*" element={<NotFound />} />
                           </Routes>
                         </Layout>
