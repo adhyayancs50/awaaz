@@ -163,7 +163,7 @@ const UploadPage: React.FC = () => {
                     className={contentType === ContentType.WORD ? "bg-green-600 hover:bg-green-700" : "border-green-200"}
                     onClick={() => setContentType(ContentType.WORD)}
                   >
-                    {t("sentence")}
+                    {t("word")}
                   </Button>
                   <Button
                     type="button"
