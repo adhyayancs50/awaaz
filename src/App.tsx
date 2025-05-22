@@ -11,6 +11,7 @@ import ArchivePage from "./pages/ArchivePage";
 import SettingsPage from "./pages/SettingsPage";
 import TranslationPage from "./pages/TranslationPage";
 import AboutPage from "./pages/AboutPage";
+import UploadPage from "./pages/UploadPage";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 import SplashScreen from "./components/SplashScreen";
@@ -60,6 +61,7 @@ const App = () => {
                             <Route path="/translate" element={<TranslationPage />} />
                             <Route path="/settings" element={<SettingsPage />} />
                             <Route path="/about" element={<AboutPage />} />
+                            <Route path="/upload" element={<UploadPage />} />
                             <Route path="*" element={<NotFound />} />
                           </Routes>
                         </Layout>

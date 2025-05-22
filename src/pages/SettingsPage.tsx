@@ -1,16 +1,14 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRecordings } from "@/contexts/RecordingContext";
-import { useSettings } from "@/contexts/SettingsContext";
+import { useNavigate, useLocation } from "react-router-dom";
+import AuthForm from "@/components/AuthForm";
 import { useTranslation } from "@/contexts/TranslationContext";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
+import { Label } from "@/components/ui/label";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -21,201 +19,131 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import EmptyState from "@/components/EmptyState";
-import { toast } from "@/components/ui/use-toast";
+import { motion } from "framer-motion";
 
-const SettingsPage: React.FC = () => {
-  const { user, logout, updateDisplayName, deleteAccount } = useAuth();
-  const { syncRecordings } = useRecordings();
-  const { syncOptions, updateSyncOptions } = useSettings();
-  const { t, currentLanguage, setLanguage } = useTranslation();
+const SettingsPage = () => {
+  const { user, updateDisplayName, deleteAccount, isLoading } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { t } = useTranslation();
   
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [displayName, setDisplayName] = useState(user?.name || "");
+  const [displayName, setDisplayName] = useState("");
   
-  const handleSyncOptionsChange = (key: keyof typeof syncOptions, value: boolean) => {
-    updateSyncOptions({ [key]: value });
-  };
+  // Check if we need to open the auth form directly
+  const openAuthForm = location.state?.openAuthForm;
   
-  const handleDisplayNameUpdate = () => {
-    if (!displayName.trim()) {
-      toast({
-        title: t("error"),
-        description: t("displayNameRequired"),
-        variant: "destructive",
-      });
-      return;
+  useEffect(() => {
+    if (user?.name) {
+      setDisplayName(user.name);
     }
-    
-    setIsUpdating(true);
-    
-    try {
-      updateDisplayName(displayName);
-      toast({
-        title: t("success"),
-        description: t("displayNameUpdated"),
-      });
-    } catch (error) {
-      console.error("Failed to update display name:", error);
-      toast({
-        title: t("error"),
-        description: t("updateFailed"),
-        variant: "destructive",
-      });
-    } finally {
-      setIsUpdating(false);
+  }, [user]);
+  
+  const handleUpdateProfile = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (displayName.trim()) {
+      updateDisplayName(displayName.trim());
     }
   };
   
   const handleDeleteAccount = async () => {
     try {
       await deleteAccount();
-      // Navigation happens automatically due to auth state change
+      navigate("/");
     } catch (error) {
-      console.error("Failed to delete account:", error);
+      console.error("Error deleting account:", error);
     }
   };
   
-  if (!user?.isLoggedIn) {
+  if (!user?.isLoggedIn || openAuthForm) {
     return (
-      <EmptyState
-        title={t("signInToAccessSettings")}
-        description={t("createAccountOrSignIn")}
-        icon="⚙️"
-      />
+      <div className="max-w-md mx-auto">
+        <motion.h1 
+          className="text-3xl font-bold mb-8 text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          {t("settings")}
+        </motion.h1>
+        <AuthForm />
+      </div>
     );
   }
   
   return (
     <div className="max-w-md mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center">{t("settings")}</h1>
+      <motion.h1 
+        className="text-3xl font-bold mb-8 text-center text-green-600"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        {t("settings")}
+      </motion.h1>
       
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("profile")}</CardTitle>
-            <CardDescription>{t("manageYourInfo")}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-4">
-              <Avatar className="w-16 h-16">
-                <AvatarImage src={user.photoURL} />
-                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-              </Avatar>
-              
-              <div>
-                <h3 className="font-medium text-lg">{user.name}</h3>
-                <p className="text-sm text-muted-foreground">{user.email}</p>
-              </div>
+      <Card className="mb-6">
+        <CardContent className="pt-6">
+          <form onSubmit={handleUpdateProfile} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="displayName">{t("displayName")}</Label>
+              <Input
+                id="displayName"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                className="border-green-200 focus:border-green-400"
+              />
             </div>
             
             <div className="space-y-2">
-              <div>
-                <Label htmlFor="displayName">{t("displayName")}</Label>
-                <Input
-                  id="displayName"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder={t("yourName")}
-                />
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button onClick={handleDisplayNameUpdate} disabled={isUpdating}>
-              {isUpdating ? t("updating") : t("updateProfile")}
-            </Button>
-            
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">{t("deleteAccount")}</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>{t("areYouSure")}</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    {t("deleteAccountWarning")}
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteAccount}>
-                    {t("deleteAccount")}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </CardFooter>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("language")}</CardTitle>
-            <CardDescription>{t("chooseYourLanguage")}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="language-switch">{t("useHindi")}</Label>
-              <Switch
-                id="language-switch"
-                checked={currentLanguage === "hi"}
-                onCheckedChange={(checked) => setLanguage(checked ? "hi" : "en")}
-              />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("syncSettings")}</CardTitle>
-            <CardDescription>{t("configureSync")}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label htmlFor="wifi-only">{t("syncOnWifiOnly")}</Label>
-                <p className="text-sm text-muted-foreground">{t("saveMobileData")}</p>
-              </div>
-              <Switch
-                id="wifi-only"
-                checked={syncOptions.syncOnWifiOnly}
-                onCheckedChange={(checked) => handleSyncOptionsChange("syncOnWifiOnly", checked)}
+              <Label htmlFor="email">{t("email")}</Label>
+              <Input
+                id="email"
+                value={user.email}
+                disabled
+                className="bg-gray-50 border-green-100"
               />
             </div>
             
-            <div className="flex items-center justify-between">
-              <div>
-                <Label htmlFor="auto-sync">{t("autoSync")}</Label>
-                <p className="text-sm text-muted-foreground">{t("autoSyncDescription")}</p>
-              </div>
-              <Switch
-                id="auto-sync"
-                checked={syncOptions.autoSync}
-                onCheckedChange={(checked) => handleSyncOptionsChange("autoSync", checked)}
-              />
+            <div className="pt-2">
+              <Button 
+                type="submit" 
+                className="w-full bg-green-600 hover:bg-green-700"
+                disabled={isLoading || !displayName.trim() || displayName === user.name}
+              >
+                {t("updateProfile")}
+              </Button>
             </div>
-          </CardContent>
-          <CardFooter>
-            <Button onClick={() => syncRecordings()}>
-              {t("syncNow")}
-            </Button>
-          </CardFooter>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("aboutAWAaz")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              {t("aboutAWAazDescription")}
-            </p>
-          </CardContent>
-          <CardFooter>
-            <p className="text-xs text-muted-foreground">Version 1.0.0</p>
-          </CardFooter>
-        </Card>
-      </div>
+          </form>
+        </CardContent>
+      </Card>
+      
+      <Card className="border-red-100">
+        <CardContent className="pt-6">
+          <h3 className="text-lg font-medium mb-4 text-red-600">{t("dangerZone")}</h3>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="destructive" 
+                className="w-full"
+              >
+                {t("deleteAccount")}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{t("confirmDeletion")}</AlertDialogTitle>
+                <AlertDialogDescription>
+                  {t("deleteAccountWarning")}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteAccount}>{t("delete")}</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </CardContent>
+      </Card>
     </div>
   );
 };

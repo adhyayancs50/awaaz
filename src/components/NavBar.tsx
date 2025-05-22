@@ -24,7 +24,7 @@ export const NavBar: React.FC = () => {
   };
   
   const handleSignInClick = () => {
-    navigate("/settings");
+    navigate("/settings", { state: { openAuthForm: true } });
   };
   
   return (
@@ -85,6 +85,9 @@ export const NavBar: React.FC = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild className="hover:bg-green-50 cursor-pointer">
                     <Link to="/translate">{t("translate")}</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="hover:bg-green-50 cursor-pointer">
+                    <Link to="/upload">{t("upload")}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild className="hover:bg-green-50 cursor-pointer">
                     <Link to="/settings">{t("settings")}</Link>
