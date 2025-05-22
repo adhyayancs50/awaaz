@@ -22,7 +22,7 @@ const UploadPage: React.FC = () => {
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [language, setLanguage] = useState("");
-  const [contentType, setContentType] = useState<ContentType>("sentence");
+  const [contentType, setContentType] = useState<ContentType>(ContentType.WORD);
   const [uploadComplete, setUploadComplete] = useState(false);
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,7 +71,7 @@ const UploadPage: React.FC = () => {
       contentType,
       audioUrl,
       transcription: "",
-      translation: null
+      translations: {}
     });
     
     // Reset the form and show success message
@@ -157,25 +157,25 @@ const UploadPage: React.FC = () => {
                 <div className="grid grid-cols-3 gap-2">
                   <Button
                     type="button"
-                    variant={contentType === "sentence" ? "default" : "outline"}
-                    className={contentType === "sentence" ? "bg-green-600 hover:bg-green-700" : "border-green-200"}
-                    onClick={() => setContentType("sentence")}
+                    variant={contentType === ContentType.WORD ? "default" : "outline"}
+                    className={contentType === ContentType.WORD ? "bg-green-600 hover:bg-green-700" : "border-green-200"}
+                    onClick={() => setContentType(ContentType.WORD)}
                   >
                     {t("sentence")}
                   </Button>
                   <Button
                     type="button"
-                    variant={contentType === "story" ? "default" : "outline"}
-                    className={contentType === "story" ? "bg-green-600 hover:bg-green-700" : "border-green-200"}
-                    onClick={() => setContentType("story")}
+                    variant={contentType === ContentType.STORY ? "default" : "outline"}
+                    className={contentType === ContentType.STORY ? "bg-green-600 hover:bg-green-700" : "border-green-200"}
+                    onClick={() => setContentType(ContentType.STORY)}
                   >
                     {t("story")}
                   </Button>
                   <Button
                     type="button"
-                    variant={contentType === "song" ? "default" : "outline"}
-                    className={contentType === "song" ? "bg-green-600 hover:bg-green-700" : "border-green-200"}
-                    onClick={() => setContentType("song")}
+                    variant={contentType === ContentType.SONG ? "default" : "outline"}
+                    className={contentType === ContentType.SONG ? "bg-green-600 hover:bg-green-700" : "border-green-200"}
+                    onClick={() => setContentType(ContentType.SONG)}
                   >
                     {t("song")}
                   </Button>
