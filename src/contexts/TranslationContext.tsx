@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 type TranslationContextType = {
@@ -245,12 +246,24 @@ const translations = {
     recordNewVoice: "Record New Voice",
     browseArchive: "Browse Archive",
     translateRecording: "Translate Recording",
-    startRecording: "Start Recording",
     exploreArchive: "Explore Archive",
     startTranslating: "Start Translating",
     uploadFiles: "Upload Files",
     whatWouldYouLikeToDo: "What Would You Like To Do?",
-    delete: "Delete"
+    delete: "Delete",
+    title: "Title",
+    required: "Required",
+    languageName: "Language Name",
+    enterLanguageName: "Enter Language Name",
+    recordSentence: "Record a Phrase, Story, or Song",
+    discard: "Discard",
+    resume: "Resume",
+    saveYourRecording: "Save Your Recording",
+    speakerName: "Speaker Name",
+    startOver: "Start Over",
+    recordingNotFound: "Recording not found",
+    titleRequired: "Title is required",
+    languageRequired: "Language is required"
   },
   hi: {
     signIn: "साइन इन करें",
@@ -448,12 +461,24 @@ const translations = {
     recordNewVoice: "नई आवाज़ रिकॉर्ड करें",
     browseArchive: "संग्रह ब्राउज़ करें",
     translateRecording: "रिकॉर्डिंग का अनुवाद करें",
-    startRecording: "रिकॉर्डिंग शुरू करें",
     exploreArchive: "संग्रह का अन्वेषण करें",
     startTranslating: "अनुवाद शुरू करें",
     uploadFiles: "फ़ाइलें अपलोड करें",
     whatWouldYouLikeToDo: "आप क्या करना चाहेंगे?",
-    delete: "हटाएं"
+    delete: "हटाएं",
+    title: "शीर्षक",
+    required: "आवश्यक",
+    languageName: "भाषा का नाम",
+    enterLanguageName: "भाषा का नाम दर्ज करें",
+    recordSentence: "वाक्यांश, कहानी, या गीत रिकॉर्ड करें",
+    discard: "रद्द करें",
+    resume: "फिर से शुरू करें",
+    saveYourRecording: "अपनी रिकॉर्डिंग सहेजें",
+    speakerName: "वक्ता का नाम",
+    startOver: "फिर से शुरू करें",
+    recordingNotFound: "रिकॉर्डिंग नहीं मिली",
+    titleRequired: "शीर्षक आवश्यक है",
+    languageRequired: "भाषा आवश्यक है"
   }
 };
 
