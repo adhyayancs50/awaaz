@@ -1,6 +1,8 @@
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User } from "@/types";
 import { toast } from "@/components/ui/use-toast";
+import { supabase, cleanupAuthState, safeSignOut } from "@/integrations/supabase/client";
 
 interface AuthContextType {
   user: User | null;
@@ -10,6 +12,8 @@ interface AuthContextType {
   updateDisplayName: (displayName: string) => void;
   deleteAccount: () => Promise<void>;
   isLoading: boolean;
+  startEmailVerification: (email: string, displayName: string) => Promise<boolean>;
+  session: any;
 }
 
 const defaultUser: User = {
@@ -26,7 +30,9 @@ const AuthContext = createContext<AuthContextType>({
   logout: () => {},
   updateDisplayName: () => {},
   deleteAccount: async () => {},
-  isLoading: true
+  isLoading: true,
+  startEmailVerification: async () => false,
+  session: null
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -34,60 +40,92 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [session, setSession] = useState<any>(null);
 
-  // Check for existing user session on app load
+  // Initialize auth state and set up listener
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const storedUser = localStorage.getItem("awaaz_user");
+    // Set up auth state change listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, currentSession) => {
+        setSession(currentSession);
         
-        if (storedUser) {
-          setUser(JSON.parse(storedUser));
+        if (currentSession?.user) {
+          const userData: User = {
+            id: currentSession.user.id,
+            name: currentSession.user.user_metadata?.display_name || 'User',
+            email: currentSession.user.email || '',
+            isLoggedIn: true,
+            photoURL: currentSession.user.user_metadata?.avatar_url,
+          };
+          setUser(userData);
+        } else {
+          setUser(null);
+        }
+        
+        if (event === 'SIGNED_OUT') {
+          cleanupAuthState();
+        }
+      }
+    );
+    
+    // Check for existing session
+    const initializeAuth = async () => {
+      try {
+        const { data: { session: existingSession } } = await supabase.auth.getSession();
+        setSession(existingSession);
+        
+        if (existingSession?.user) {
+          const userData: User = {
+            id: existingSession.user.id,
+            name: existingSession.user.user_metadata?.display_name || 'User',
+            email: existingSession.user.email || '',
+            isLoggedIn: true,
+            photoURL: existingSession.user.user_metadata?.avatar_url,
+          };
+          setUser(userData);
         }
       } catch (error) {
-        console.error("Auth check failed:", error);
+        console.error("Auth initialization error:", error);
       } finally {
         setIsLoading(false);
       }
     };
-
-    checkAuth();
+    
+    initializeAuth();
+    
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Get users from localStorage
-      const users = JSON.parse(localStorage.getItem("awaaz_users") || "[]");
-      const foundUser = users.find((u: any) => u.email === email);
+      // Clean up any existing auth state
+      cleanupAuthState();
       
-      if (!foundUser) {
-        throw new Error("Invalid credentials");
-      }
+      // First sign out globally to ensure clean state
+      await safeSignOut();
       
-      // Check password
-      if (foundUser.password !== password) {
-        throw new Error("Invalid credentials");
-      }
-      
-      const loggedInUser: User = {
-        id: foundUser.id,
-        name: foundUser.displayName,
-        email: foundUser.email,
-        isLoggedIn: true
-      };
-      
-      setUser(loggedInUser);
-      localStorage.setItem("awaaz_user", JSON.stringify(loggedInUser));
-      toast({
-        title: "Logged in successfully",
-        description: `Welcome back, ${loggedInUser.name}!`,
+      // Now try to sign in
+      const { data, error } = await supabase.auth.signInWithPassword({ 
+        email, 
+        password 
       });
-    } catch (error) {
+      
+      if (error) throw error;
+      
+      if (data.user) {
+        toast({
+          title: "Logged in successfully",
+          description: `Welcome back, ${data.user.user_metadata?.display_name || data.user.email}!`,
+        });
+      }
+    } catch (error: any) {
       console.error("Login failed:", error);
       toast({
         title: "Login failed",
-        description: "Invalid email or password",
+        description: error.message || "Invalid email or password",
         variant: "destructive",
       });
       throw error;
@@ -99,42 +137,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (email: string, password: string, displayName: string) => {
     setIsLoading(true);
     try {
-      // Get existing users or initialize empty array
-      const existingUsers = JSON.parse(localStorage.getItem("awaaz_users") || "[]");
-      
-      // Check if email already exists
-      if (existingUsers.some((user: any) => user.email === email)) {
-        throw new Error("Email already in use");
-      }
-      
-      // Create new user
-      const newUser = {
-        id: `user_${Date.now()}`,
+      // Regular signup is replaced with email verification flow
+      // This is kept for compatibility but should not be used directly
+      const { data, error } = await supabase.auth.signUp({
         email,
-        password, // In a real app, this would be hashed
-        displayName,
-        createdAt: new Date().toISOString()
-      };
+        password,
+        options: {
+          data: {
+            display_name: displayName
+          }
+        }
+      });
       
-      // Add to users array
-      existingUsers.push(newUser);
-      localStorage.setItem("awaaz_users", JSON.stringify(existingUsers));
-      
-      // Auto login after registration
-      const loggedInUser: User = {
-        id: newUser.id,
-        name: newUser.displayName,
-        email: newUser.email,
-        isLoggedIn: true
-      };
-      
-      setUser(loggedInUser);
-      localStorage.setItem("awaaz_user", JSON.stringify(loggedInUser));
+      if (error) throw error;
       
       toast({
-        title: "Registration successful",
-        description: `Welcome to AWAaz, ${displayName}!`,
+        title: "Registration started",
+        description: "Please check your email to verify your account.",
       });
+      
+      return data;
     } catch (error: any) {
       console.error("Registration failed:", error);
       toast({
@@ -148,49 +170,105 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const logout = () => {
-    // Only remove the current user session, not the user data
-    setUser(null);
-    localStorage.removeItem("awaaz_user");
-    toast({
-      title: "Logged out",
-      description: "You have been logged out successfully",
-    });
+  const startEmailVerification = async (email: string, displayName: string) => {
+    setIsLoading(true);
+    try {
+      // Call our edge function to start email verification
+      const response = await fetch(`${supabase.functions.url}/send-verification-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          email, 
+          display_name: displayName 
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send verification email");
+      }
+      
+      toast({
+        title: "Verification email sent",
+        description: `Please check ${email} for a verification link.`,
+      });
+      
+      return true;
+    } catch (error: any) {
+      console.error("Email verification request failed:", error);
+      toast({
+        title: "Verification failed",
+        description: error.message || "Failed to send verification email",
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const updateDisplayName = (displayName: string) => {
+  const logout = async () => {
+    try {
+      await safeSignOut();
+      
+      // Set user to null
+      setUser(null);
+      
+      toast({
+        title: "Logged out",
+        description: "You have been logged out successfully",
+      });
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast({
+        title: "Logout failed",
+        description: "An error occurred during logout",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const updateDisplayName = async (displayName: string) => {
     if (!user) return;
     
-    // Update current user object
-    const updatedUser = { ...user, name: displayName };
-    setUser(updatedUser);
-    localStorage.setItem("awaaz_user", JSON.stringify(updatedUser));
-    
-    // Update in users array
-    const users = JSON.parse(localStorage.getItem("awaaz_users") || "[]");
-    const updatedUsers = users.map((u: any) => 
-      u.id === user.id ? { ...u, displayName } : u
-    );
-    localStorage.setItem("awaaz_users", JSON.stringify(updatedUsers));
-    
-    toast({
-      title: "Profile updated",
-      description: "Your display name has been updated successfully",
-    });
+    try {
+      // Update display_name in user metadata
+      const { error } = await supabase.auth.updateUser({
+        data: { display_name: displayName }
+      });
+      
+      if (error) throw error;
+      
+      // Update local user state
+      setUser(prev => prev ? { ...prev, name: displayName } : null);
+      
+      toast({
+        title: "Profile updated",
+        description: "Your display name has been updated successfully",
+      });
+    } catch (error) {
+      console.error("Profile update failed:", error);
+      toast({
+        title: "Update failed",
+        description: "Failed to update your profile",
+        variant: "destructive",
+      });
+    }
   };
 
   const deleteAccount = async () => {
     if (!user) return;
     
     try {
-      // Remove from users array
-      const users = JSON.parse(localStorage.getItem("awaaz_users") || "[]");
-      const filteredUsers = users.filter((u: any) => u.id !== user.id);
-      localStorage.setItem("awaaz_users", JSON.stringify(filteredUsers));
+      // Delete user account
+      await supabase.rpc('delete_user');
       
-      // Remove current user session
+      // Sign out and clean up
+      await safeSignOut();
       setUser(null);
-      localStorage.removeItem("awaaz_user");
       
       toast({
         title: "Account deleted",
@@ -215,7 +293,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       logout, 
       updateDisplayName,
       deleteAccount,
-      isLoading 
+      isLoading,
+      startEmailVerification,
+      session
     }}>
       {children}
     </AuthContext.Provider>
