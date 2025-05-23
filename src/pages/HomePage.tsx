@@ -3,10 +3,10 @@ import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { useRecordings } from "@/contexts/RecordingContext";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Home, FileAudio, Book, Languages, Upload } from "lucide-react";
+import { Archive, Globe, Headphones, Languages, Mic, Upload, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -19,135 +19,193 @@ const HomePage: React.FC = () => {
   // Get real-time stats from recordings
   const stats = getStats();
 
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i: number) => ({
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
       opacity: 1,
-      y: 0,
       transition: {
-        delay: i * 0.1,
-        duration: 0.5,
-      },
-    }),
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
   };
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-6xl mx-auto">
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-8 text-center"
+        transition={{ duration: 0.6 }}
+        className="mb-10 text-center"
       >
-        <h1 className="text-3xl font-bold text-green-600 mb-2">
-          {t("welcomeBack")}, {user?.name || t("guest")}!
+        <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gradient">
+          {t("welcomeBack")}, {user?.name || t("guest")}
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground max-w-2xl mx-auto">
           {t("preserveLanguagesSubtitle")}
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <motion.div 
-          custom={0} 
-          initial="hidden" 
-          animate="visible" 
-          variants={cardVariants}
-        >
-          <Link to="/record">
-            <Card className="h-full hover:bg-green-50 hover:shadow-md transition-all cursor-pointer border-green-200">
-              <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-                <FileAudio className="h-12 w-12 text-green-600 mb-4" />
-                <h3 className="text-xl font-medium text-green-700 mb-2">{t("startRecording")}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {t("captureVoiceDescription")}
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
-        </motion.div>
+      <motion.div 
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="mb-12"
+      >
+        <h2 className="text-xl font-semibold mb-6 text-center md:text-left">
+          {t("whatWouldYouLikeToDo")}
+        </h2>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div variants={item}>
+            <Link to="/record" className="block h-full">
+              <Card className="h-full bg-white dark:bg-neutral-dark border border-border hover:border-primary-200 dark:hover:border-primary-900 hover:shadow-card transition-all duration-300 overflow-hidden relative group">
+                <div className="absolute inset-0 bg-gradient-to-b from-primary-50/0 to-primary-50/70 dark:from-primary-900/0 dark:to-primary-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <CardHeader className="pb-2">
+                  <div className="rounded-full bg-primary-50 dark:bg-primary-900/30 w-12 h-12 flex items-center justify-center mb-2">
+                    <Mic className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                  </div>
+                  <CardTitle className="text-lg">{t("recordNewVoice")}</CardTitle>
+                </CardHeader>
+                <CardContent className="pb-8">
+                  <CardDescription>
+                    {t("captureLanguageDescription")}
+                  </CardDescription>
+                </CardContent>
+                <CardFooter className="absolute bottom-0 left-0 right-0 h-10 flex items-center justify-end px-6">
+                  <span className="text-sm font-medium text-primary-600 dark:text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {t("startRecording")} →
+                  </span>
+                </CardFooter>
+              </Card>
+            </Link>
+          </motion.div>
 
-        <motion.div 
-          custom={1} 
-          initial="hidden" 
-          animate="visible" 
-          variants={cardVariants}
-        >
-          <Link to="/archive">
-            <Card className="h-full hover:bg-green-50 hover:shadow-md transition-all cursor-pointer border-green-200">
-              <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-                <Book className="h-12 w-12 text-green-600 mb-4" />
-                <h3 className="text-xl font-medium text-green-700 mb-2">{t("browseArchive")}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {t("exploreRecordingsDescription")}
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
-        </motion.div>
+          <motion.div variants={item}>
+            <Link to="/archive" className="block h-full">
+              <Card className="h-full bg-white dark:bg-neutral-dark border border-border hover:border-primary-200 dark:hover:border-primary-900 hover:shadow-card transition-all duration-300 overflow-hidden relative group">
+                <div className="absolute inset-0 bg-gradient-to-b from-primary-50/0 to-primary-50/70 dark:from-primary-900/0 dark:to-primary-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <CardHeader className="pb-2">
+                  <div className="rounded-full bg-primary-50 dark:bg-primary-900/30 w-12 h-12 flex items-center justify-center mb-2">
+                    <Archive className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                  </div>
+                  <CardTitle className="text-lg">{t("browseArchive")}</CardTitle>
+                </CardHeader>
+                <CardContent className="pb-8">
+                  <CardDescription>
+                    {t("exploreRecordingsDescription")}
+                  </CardDescription>
+                </CardContent>
+                <CardFooter className="absolute bottom-0 left-0 right-0 h-10 flex items-center justify-end px-6">
+                  <span className="text-sm font-medium text-primary-600 dark:text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {t("exploreArchive")} →
+                  </span>
+                </CardFooter>
+              </Card>
+            </Link>
+          </motion.div>
 
-        <motion.div 
-          custom={2} 
-          initial="hidden" 
-          animate="visible" 
-          variants={cardVariants}
-        >
-          <Link to="/translate">
-            <Card className="h-full hover:bg-green-50 hover:shadow-md transition-all cursor-pointer border-green-200">
-              <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-                <Languages className="h-12 w-12 text-green-600 mb-4" />
-                <h3 className="text-xl font-medium text-green-700 mb-2">{t("translateRecording")}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {t("helpTranslateDescription")}
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
-        </motion.div>
+          <motion.div variants={item}>
+            <Link to="/translate" className="block h-full">
+              <Card className="h-full bg-white dark:bg-neutral-dark border border-border hover:border-primary-200 dark:hover:border-primary-900 hover:shadow-card transition-all duration-300 overflow-hidden relative group">
+                <div className="absolute inset-0 bg-gradient-to-b from-primary-50/0 to-primary-50/70 dark:from-primary-900/0 dark:to-primary-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <CardHeader className="pb-2">
+                  <div className="rounded-full bg-primary-50 dark:bg-primary-900/30 w-12 h-12 flex items-center justify-center mb-2">
+                    <Globe className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                  </div>
+                  <CardTitle className="text-lg">{t("translateRecording")}</CardTitle>
+                </CardHeader>
+                <CardContent className="pb-8">
+                  <CardDescription>
+                    {t("helpTranslateDescription")}
+                  </CardDescription>
+                </CardContent>
+                <CardFooter className="absolute bottom-0 left-0 right-0 h-10 flex items-center justify-end px-6">
+                  <span className="text-sm font-medium text-primary-600 dark:text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {t("startTranslating")} →
+                  </span>
+                </CardFooter>
+              </Card>
+            </Link>
+          </motion.div>
 
-        <motion.div 
-          custom={3} 
-          initial="hidden" 
-          animate="visible" 
-          variants={cardVariants}
-        >
-          <Link to="/upload">
-            <Card className="h-full hover:bg-green-50 hover:shadow-md transition-all cursor-pointer border-green-200">
-              <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-                <Upload className="h-12 w-12 text-green-600 mb-4" />
-                <h3 className="text-xl font-medium text-green-700 mb-2">{t("uploadRecording")}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {t("uploadExistingDescription")}
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
-        </motion.div>
-      </div>
+          <motion.div variants={item}>
+            <Link to="/upload" className="block h-full">
+              <Card className="h-full bg-white dark:bg-neutral-dark border border-border hover:border-primary-200 dark:hover:border-primary-900 hover:shadow-card transition-all duration-300 overflow-hidden relative group">
+                <div className="absolute inset-0 bg-gradient-to-b from-primary-50/0 to-primary-50/70 dark:from-primary-900/0 dark:to-primary-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <CardHeader className="pb-2">
+                  <div className="rounded-full bg-primary-50 dark:bg-primary-900/30 w-12 h-12 flex items-center justify-center mb-2">
+                    <Upload className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                  </div>
+                  <CardTitle className="text-lg">{t("uploadRecording")}</CardTitle>
+                </CardHeader>
+                <CardContent className="pb-8">
+                  <CardDescription>
+                    {t("uploadExistingDescription")}
+                  </CardDescription>
+                </CardContent>
+                <CardFooter className="absolute bottom-0 left-0 right-0 h-10 flex items-center justify-end px-6">
+                  <span className="text-sm font-medium text-primary-600 dark:text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {t("uploadFiles")} →
+                  </span>
+                </CardFooter>
+              </Card>
+            </Link>
+          </motion.div>
+        </div>
+      </motion.div>
 
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.5 }}
-        className="mb-8"
+        className="mb-12"
       >
-        <Card className="border-green-200 bg-gradient-to-r from-green-50 to-neutral-50">
-          <CardContent className="p-6">
-            <h3 className="text-xl font-medium text-green-700 mb-4 text-center">
-              {t("communityStats")}
-            </h3>
-            <div className={`grid ${isMobile ? 'grid-cols-1 gap-2' : 'grid-cols-3 gap-4'} text-center`}>
-              <div className="p-4">
-                <p className="text-3xl font-bold text-green-600">{stats.languages}</p>
-                <p className="text-sm text-muted-foreground">{t("languagesArchived")}</p>
+        <Card className="bg-white dark:bg-neutral-dark border-border overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 to-transparent dark:from-primary-900/10 dark:to-transparent pointer-events-none" />
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+              {t("communityImpact")}
+            </CardTitle>
+            <CardDescription>
+              {t("communityStatsDescription")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className={`grid ${isMobile ? 'grid-cols-2 gap-4' : 'grid-cols-3 gap-6'} text-center`}>
+              <div className="p-5 bg-neutral-surface dark:bg-neutral-dark/50 rounded-lg">
+                <Languages className="h-8 w-8 text-primary-600 dark:text-primary-400 mx-auto mb-3" />
+                <p className="text-3xl font-bold text-primary-600 dark:text-primary-400">
+                  {stats.languages}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {t("languagesArchived")}
+                </p>
               </div>
-              <div className="p-4">
-                <p className="text-3xl font-bold text-green-600">{stats.recordings}</p>
-                <p className="text-sm text-muted-foreground">{t("totalRecordings")}</p>
+              
+              <div className="p-5 bg-neutral-surface dark:bg-neutral-dark/50 rounded-lg">
+                <Headphones className="h-8 w-8 text-primary-600 dark:text-primary-400 mx-auto mb-3" />
+                <p className="text-3xl font-bold text-primary-600 dark:text-primary-400">
+                  {stats.recordings}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {t("totalRecordings")}
+                </p>
               </div>
-              <div className="p-4">
-                <p className="text-3xl font-bold text-green-600">{stats.contributors}</p>
-                <p className="text-sm text-muted-foreground">{t("activeContributors")}</p>
+              
+              <div className={`p-5 bg-neutral-surface dark:bg-neutral-dark/50 rounded-lg ${isMobile ? 'col-span-2' : ''}`}>
+                <Users className="h-8 w-8 text-primary-600 dark:text-primary-400 mx-auto mb-3" />
+                <p className="text-3xl font-bold text-primary-600 dark:text-primary-400">
+                  {stats.contributors}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {t("activeContributors")}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -161,7 +219,7 @@ const HomePage: React.FC = () => {
         className="flex justify-center"
       >
         <Link to="/about">
-          <Button variant="outline" className="border-green-300 text-green-700 hover:bg-green-50">
+          <Button variant="outline" className="border-primary-200 dark:border-primary-900 text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20">
             {t("learnAboutAWAaz")}
           </Button>
         </Link>

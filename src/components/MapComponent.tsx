@@ -45,8 +45,9 @@ const MapComponent: React.FC<MapComponentProps> = ({ languages }) => {
     mapRef.current.style.position = 'relative';
     
     // Add a border to highlight the map outline
-    mapRef.current.style.border = '2px solid #10b981';
-    mapRef.current.style.borderRadius = '8px';
+    mapRef.current.style.border = '1px solid rgba(45, 139, 97, 0.2)';
+    mapRef.current.style.borderRadius = '12px';
+    mapRef.current.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.05)';
     
     // Add markers for each language
     languages.forEach(lang => {
@@ -93,17 +94,21 @@ const MapComponent: React.FC<MapComponentProps> = ({ languages }) => {
     marker.style.top = `${y}%`;
     marker.style.zIndex = '10';
     
-    // Create marker content
+    // Create marker content with pulsing effect
     const markerPin = document.createElement('div');
-    markerPin.className = "w-4 h-4 bg-green-600 rounded-full border-2 border-white shadow-md flex items-center justify-center hover:scale-125 transition-transform duration-200";
+    markerPin.className = "relative";
+    markerPin.innerHTML = `
+      <div class="animate-pulse-gentle absolute -inset-3 rounded-full bg-primary-200 opacity-30"></div>
+      <div class="w-4 h-4 bg-primary rounded-full border-2 border-white shadow-md flex items-center justify-center hover:scale-125 transition-transform duration-200"></div>
+    `;
     
     // Create tooltip
     const tooltip = document.createElement('div');
-    tooltip.className = "absolute bottom-full left-1/2 transform -translate-x-1/2 -translate-y-2 bg-white p-2 rounded shadow-lg text-xs w-32 opacity-0 invisible transition-opacity duration-200 z-10";
+    tooltip.className = "absolute bottom-full left-1/2 transform -translate-x-1/2 -translate-y-2 bg-white dark:bg-neutral-dark border border-border p-2 rounded-md shadow-md text-xs w-40 opacity-0 invisible transition-opacity duration-200 z-20";
     tooltip.innerHTML = `
-      <div class="font-bold text-green-700">${lang.name}</div>
-      <div class="text-gray-600">${lang.count} ${t("recordings")}</div>
-      <div class="text-gray-600">${lang.region}</div>
+      <div class="font-semibold text-primary-600 dark:text-primary-400">${lang.name}</div>
+      <div class="text-muted-foreground">${lang.count} ${t("recordings")}</div>
+      <div class="text-muted-foreground">${lang.region}</div>
     `;
     
     // Add hover effects
@@ -131,18 +136,18 @@ const MapComponent: React.FC<MapComponentProps> = ({ languages }) => {
   };
   
   return (
-    <div className="relative w-full h-full bg-green-50 rounded-md overflow-hidden">
+    <div className="relative w-full h-full bg-white dark:bg-neutral-dark border border-border rounded-xl overflow-hidden">
       <div 
         ref={mapRef} 
         className="w-full h-full"
       >
         {!mapLoaded && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="animate-pulse text-green-600">Loading map...</div>
+            <div className="animate-pulse text-primary">Loading map...</div>
           </div>
         )}
       </div>
-      <div className="absolute bottom-2 right-2 bg-white bg-opacity-70 p-1 rounded text-xs text-green-700">
+      <div className="absolute bottom-3 right-3 bg-white dark:bg-neutral-dark bg-opacity-90 dark:bg-opacity-90 p-2 rounded-md text-xs text-muted-foreground border border-border shadow-sm">
         {t("clickOnMarkersToExplore")}
       </div>
     </div>

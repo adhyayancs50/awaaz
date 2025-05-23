@@ -15,6 +15,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { useTranslation } from "@/contexts/TranslationContext";
+import { motion } from "framer-motion";
+import { LogIn, UserPlus, Mail, Lock, User } from "lucide-react";
 
 const AuthForm: React.FC = () => {
   const { login, register, isLoading } = useAuth();
@@ -73,136 +75,172 @@ const AuthForm: React.FC = () => {
   };
   
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <Tabs defaultValue="login" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="login">{t("login")}</TabsTrigger>
-          <TabsTrigger value="register">{t("register")}</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="login">
-          <form onSubmit={handleLogin}>
-            <CardHeader>
-              <CardTitle>{t("welcomeBack")}</CardTitle>
-              <CardDescription>{t("loginToContinue")}</CardDescription>
-            </CardHeader>
-            
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="login-email">{t("email")}</Label>
-                <Input
-                  id="login-email"
-                  name="email"
-                  type="email"
-                  value={loginForm.email}
-                  onChange={handleLoginChange}
-                  required
-                  placeholder="you@example.com"
-                />
-              </div>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="w-full max-w-md mx-auto shadow-card">
+        <Tabs defaultValue="login" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="login" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+              <LogIn className="mr-2 h-4 w-4" />
+              {t("login")}
+            </TabsTrigger>
+            <TabsTrigger value="register" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+              <UserPlus className="mr-2 h-4 w-4" />
+              {t("register")}
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="login">
+            <form onSubmit={handleLogin}>
+              <CardHeader>
+                <CardTitle>{t("welcomeBack")}</CardTitle>
+                <CardDescription>{t("loginToContinue")}</CardDescription>
+              </CardHeader>
               
-              <div className="space-y-2">
-                <Label htmlFor="login-password">{t("password")}</Label>
-                <Input
-                  id="login-password"
-                  name="password"
-                  type="password"
-                  value={loginForm.password}
-                  onChange={handleLoginChange}
-                  required
-                  placeholder="••••••••"
-                />
-              </div>
-            </CardContent>
-            
-            <CardFooter>
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={isLoading}
-              >
-                {isLoading ? t("loggingIn") : t("login")}
-              </Button>
-            </CardFooter>
-          </form>
-        </TabsContent>
-        
-        <TabsContent value="register">
-          <form onSubmit={handleRegister}>
-            <CardHeader>
-              <CardTitle>{t("createAccount")}</CardTitle>
-              <CardDescription>{t("joinAWAaz")}</CardDescription>
-            </CardHeader>
-            
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="register-displayName">{t("whatToCallYou")}</Label>
-                <Input
-                  id="register-displayName"
-                  name="displayName"
-                  type="text"
-                  value={registerForm.displayName}
-                  onChange={handleRegisterChange}
-                  required
-                  placeholder={t("yourName")}
-                />
-              </div>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="login-email" className="flex items-center gap-1.5">
+                    <Mail className="h-3.5 w-3.5" />
+                    {t("email")}
+                  </Label>
+                  <Input
+                    id="login-email"
+                    name="email"
+                    type="email"
+                    value={loginForm.email}
+                    onChange={handleLoginChange}
+                    required
+                    placeholder="you@example.com"
+                    className="border-input focus-ring bg-background"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="login-password" className="flex items-center gap-1.5">
+                    <Lock className="h-3.5 w-3.5" />
+                    {t("password")}
+                  </Label>
+                  <Input
+                    id="login-password"
+                    name="password"
+                    type="password"
+                    value={loginForm.password}
+                    onChange={handleLoginChange}
+                    required
+                    placeholder="••••••••"
+                    className="border-input focus-ring bg-background"
+                  />
+                </div>
+              </CardContent>
               
-              <div className="space-y-2">
-                <Label htmlFor="register-email">{t("email")}</Label>
-                <Input
-                  id="register-email"
-                  name="email"
-                  type="email"
-                  value={registerForm.email}
-                  onChange={handleRegisterChange}
-                  required
-                  placeholder="you@example.com"
-                />
-              </div>
+              <CardFooter>
+                <Button 
+                  type="submit" 
+                  className="w-full bg-primary hover:bg-primary-600 active:bg-primary-700" 
+                  disabled={isLoading}
+                >
+                  {isLoading ? t("loggingIn") : t("login")}
+                </Button>
+              </CardFooter>
+            </form>
+          </TabsContent>
+          
+          <TabsContent value="register">
+            <form onSubmit={handleRegister}>
+              <CardHeader>
+                <CardTitle>{t("createAccount")}</CardTitle>
+                <CardDescription>{t("joinAWAaz")}</CardDescription>
+              </CardHeader>
               
-              <div className="space-y-2">
-                <Label htmlFor="register-password">{t("password")}</Label>
-                <Input
-                  id="register-password"
-                  name="password"
-                  type="password"
-                  value={registerForm.password}
-                  onChange={handleRegisterChange}
-                  required
-                  minLength={6}
-                  placeholder="••••••••"
-                />
-              </div>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="register-displayName" className="flex items-center gap-1.5">
+                    <User className="h-3.5 w-3.5" />
+                    {t("whatToCallYou")}
+                  </Label>
+                  <Input
+                    id="register-displayName"
+                    name="displayName"
+                    type="text"
+                    value={registerForm.displayName}
+                    onChange={handleRegisterChange}
+                    required
+                    placeholder={t("yourName")}
+                    className="border-input focus-ring bg-background"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="register-email" className="flex items-center gap-1.5">
+                    <Mail className="h-3.5 w-3.5" />
+                    {t("email")}
+                  </Label>
+                  <Input
+                    id="register-email"
+                    name="email"
+                    type="email"
+                    value={registerForm.email}
+                    onChange={handleRegisterChange}
+                    required
+                    placeholder="you@example.com"
+                    className="border-input focus-ring bg-background"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="register-password" className="flex items-center gap-1.5">
+                    <Lock className="h-3.5 w-3.5" />
+                    {t("password")}
+                  </Label>
+                  <Input
+                    id="register-password"
+                    name="password"
+                    type="password"
+                    value={registerForm.password}
+                    onChange={handleRegisterChange}
+                    required
+                    minLength={6}
+                    placeholder="••••••••"
+                    className="border-input focus-ring bg-background"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="register-confirmPassword" className="flex items-center gap-1.5">
+                    <Lock className="h-3.5 w-3.5" />
+                    {t("confirmPassword")}
+                  </Label>
+                  <Input
+                    id="register-confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    value={registerForm.confirmPassword}
+                    onChange={handleRegisterChange}
+                    required
+                    minLength={6}
+                    placeholder="••••••••"
+                    className="border-input focus-ring bg-background"
+                  />
+                </div>
+              </CardContent>
               
-              <div className="space-y-2">
-                <Label htmlFor="register-confirmPassword">{t("confirmPassword")}</Label>
-                <Input
-                  id="register-confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  value={registerForm.confirmPassword}
-                  onChange={handleRegisterChange}
-                  required
-                  minLength={6}
-                  placeholder="••••••••"
-                />
-              </div>
-            </CardContent>
-            
-            <CardFooter>
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={isLoading}
-              >
-                {isLoading ? t("creating") : t("createAccount")}
-              </Button>
-            </CardFooter>
-          </form>
-        </TabsContent>
-      </Tabs>
-    </Card>
+              <CardFooter>
+                <Button 
+                  type="submit" 
+                  className="w-full bg-primary hover:bg-primary-600 active:bg-primary-700" 
+                  disabled={isLoading}
+                >
+                  {isLoading ? t("creating") : t("createAccount")}
+                </Button>
+              </CardFooter>
+            </form>
+          </TabsContent>
+        </Tabs>
+      </Card>
+    </motion.div>
   );
 };
 

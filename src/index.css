@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Nunito:wght@400;500;600;700&family=Bitter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Nunito:wght@400;500;600;700&family=Bitter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,58 +7,58 @@
 
 @layer base {
   :root {
-    --background: 40 33% 98%;
-    --foreground: 222 11% 20%;
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 11% 20%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 11% 20%;
+    --popover-foreground: 222 47% 11%;
 
     --primary: 152 55% 36%;
-    --primary-foreground: 210 40% 98%;
+    --primary-foreground: 355 100% 100%;
 
     --secondary: 177 35% 28%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary-foreground: 355 100% 100%;
 
-    --muted: 32 26% 86%;
+    --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
 
-    --accent: 41 78% 61%;
-    --accent-foreground: 222 11% 20%;
+    --accent: 143 43% 92%;
+    --accent-foreground: 152 55% 36%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 32 26% 86%;
-    --input: 32 26% 86%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
     --ring: 152 55% 36%;
 
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 222 11% 15%;
+    --background: 222 47% 11%;
     --foreground: 210 40% 98%;
 
-    --card: 222 11% 20%;
+    --card: 222 47% 15%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222 11% 20%;
+    --popover: 222 47% 15%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 152 55% 36%;
-    --primary-foreground: 210 40% 98%;
+    --primary-foreground: 355 100% 100%;
 
     --secondary: 177 35% 28%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary-foreground: 355 100% 100%;
 
-    --muted: 217 33% 25%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 217 33% 20%;
+    --muted-foreground: 215 20% 70%;
 
-    --accent: 41 78% 61%;
-    --accent-foreground: 222 11% 20%;
+    --accent: 152 55% 20%;
+    --accent-foreground: 210 40% 98%;
 
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
@@ -75,11 +75,11 @@
   }
   
   body {
-    @apply bg-neutral-light text-foreground font-poppins;
+    @apply bg-background text-foreground font-inter antialiased;
   }
   
   h1, h2, h3, h4, h5 {
-    @apply font-poppins font-semibold tracking-wide;
+    @apply font-poppins font-semibold tracking-tight;
   }
 
   h6 {
@@ -87,7 +87,7 @@
   }
   
   button {
-    @apply rounded-lg transition-all duration-300 focus:ring-2 focus:ring-primary/50;
+    @apply rounded-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50;
   }
 
   a {
@@ -97,9 +97,17 @@
   p {
     @apply leading-relaxed;
   }
+
+  input, select, textarea {
+    @apply rounded-lg border-input focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50;
+  }
 }
 
 @layer utilities {
+  .font-inter {
+    font-family: 'Inter', sans-serif;
+  }
+  
   .font-poppins {
     font-family: 'Poppins', sans-serif;
   }
@@ -111,13 +119,19 @@
   .font-bitter {
     font-family: 'Bitter', serif;
   }
-  
-  .tribal-pattern {
+
+  .pattern-light {
+    background-color: #ffffff;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232d8b61' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .pattern-dark {
+    background-color: #1a2235;
     background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232d8b61' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
 
   .audio-wave-animation {
-    @apply flex items-end justify-center h-12 gap-1.5;
+    @apply flex items-end justify-center h-12 gap-1;
   }
   
   .audio-wave-animation .bar {
@@ -142,24 +156,33 @@
     animation-delay: -0.8s;
   }
   
-  .hover-lift {
-    @apply transition-all duration-300;
+  .elevation-1 {
+    @apply shadow-sm;
   }
   
-  .hover-lift:hover {
-    @apply -translate-y-1 shadow-md;
+  .elevation-2 {
+    @apply shadow;
+  }
+  
+  .elevation-3 {
+    @apply shadow-md;
   }
   
   .card-hover {
     @apply transition-all duration-300 hover:shadow-md hover:-translate-y-1;
   }
-  
+
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-teal-500;
   }
   
   .bg-gradient-green {
     @apply bg-gradient-to-r from-green-500 to-teal-500;
+  }
+
+  /* Focus states */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
   }
 }
 

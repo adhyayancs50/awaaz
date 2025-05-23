@@ -13,8 +13,12 @@ export default {
 	theme: {
 		container: {
 			center: true,
-			padding: '2rem',
+			padding: '1.5rem',
 			screens: {
+				'sm': '640px',
+				'md': '768px',
+				'lg': '1024px',
+				'xl': '1280px',
 				'2xl': '1400px'
 			}
 		},
@@ -28,54 +32,53 @@ export default {
 				primary: {
 					DEFAULT: '#2D8B61', // Green color from logo
 					foreground: '#FFFFFF',
-					light: '#4DA97F', // Lighter green for hover states
-					dark: '#1F6346', // Darker green for active states
+					50: '#EEFAF4',
+					100: '#D3F0E3',
+					200: '#A8E1C8',
+					300: '#7CD0AC',
+					400: '#51C091',
+					500: '#2D8B61',
+					600: '#256F4E',
+					700: '#1D543C',
+					800: '#143829',
+					900: '#0A1C15',
 				},
 				secondary: {
 					DEFAULT: '#2D5F5D', // Deep forest green
 					foreground: '#FFFFFF',
-					light: '#4D7E7C', // Lighter forest green
-					dark: '#1F4240', // Darker forest green
+					50: '#ECFAF9',
+					100: '#D0F0EE',
+					200: '#A1E1DE',
+					300: '#71D2CE',
+					400: '#42C2BD',
+					500: '#2D5F5D',
+					600: '#24C4A',
+					700: '#1B3635',
+					800: '#122423',
+					900: '#091211',
 				},
 				accent: {
-					DEFAULT: '#E9B44C', // Mustard yellow
-					foreground: '#343434',
-					light: '#F0C878', // Lighter mustard
-					dark: '#C79227', // Darker mustard
+					DEFAULT: '#EBF7F2', // Light mint for accents
+					foreground: '#2D8B61',
 				},
 				neutral: {
-					DEFAULT: '#E9DCC9', // Warm beige
-					dark: '#343434',    // Deep charcoal
-					light: '#F6F4EB',   // Soft cream
-					sand: '#D9CEB9',    // Sand color
-				},
-				vermilion: {
-					DEFAULT: '#E94F35', // Vermilion accent
-					light: '#F07863',
-					dark: '#BF3C26',
-				},
-				indigo: {
-					DEFAULT: '#4E5198', // Indigo
-					light: '#7275B5',
-					dark: '#363870',
+					DEFAULT: '#F7F9FA', // Light background
+					dark: '#1A2235',   // Deep navy for dark mode
+					light: '#FFFFFF',  // Pure white
+					surface: '#F2F5F7', // Subtle light gray
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
 					foreground: 'hsl(var(--destructive-foreground))'
 				},
 				muted: {
-					DEFAULT: '#CEC0AB', // Muted earthy tone
-					foreground: '#5E5649', // Darker for text on muted background
+					DEFAULT: 'hsl(var(--muted))',
+					foreground: 'hsl(var(--muted-foreground))'
 				},
 				sidebar: {
-					DEFAULT: 'hsl(var(--sidebar-background))',
-					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
+					DEFAULT: '#0F172A',
+					foreground: '#F8FAFC',
+					muted: '#334155'
 				},
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
@@ -90,6 +93,11 @@ export default {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			boxShadow: {
+				'soft': '0 2px 10px rgba(0, 0, 0, 0.04)',
+				'card': '0 4px 20px rgba(0, 0, 0, 0.05)',
+				'elevated': '0 8px 30px rgba(0, 0, 0, 0.08)',
 			},
 			keyframes: {
 				"accordion-down": {
@@ -139,14 +147,10 @@ export default {
 				"wave-audio": "wave-audio 1.8s ease-in-out infinite"
 			},
 			fontFamily: {
+				'inter': ['Inter', 'sans-serif'],
 				'poppins': ['Poppins', 'sans-serif'],
 				'nunito': ['Nunito', 'sans-serif'],
 				'bitter': ['Bitter', 'serif'],
-			},
-			backgroundImage: {
-				'tribal-pattern-light': "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232d8b61' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-				'tribal-pattern-dark': "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e9b44c' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-				'warli-pattern': "url(\"data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%232d8b61' fill-opacity='0.1'%3E%3Ccircle cx='16' cy='16' r='6'/%3E%3Ccircle cx='48' cy='48' r='6'/%3E%3Cpath d='M16 8c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 14c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6z'/%3E%3C/g%3E%3C/svg%3E\")",
 			},
 		},
 	},

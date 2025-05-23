@@ -4,12 +4,14 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link, useNavigate } from "react-router-dom";
-import { Menu, Languages } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Globe, LogOut, Menu, Settings, User } from "lucide-react";
 import { 
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
@@ -18,6 +20,7 @@ export const NavBar: React.FC = () => {
   const { user, logout } = useAuth();
   const { t, currentLanguage, setLanguage } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const handleLanguageToggle = () => {
     setLanguage(currentLanguage === "en" ? "hi" : "en");
@@ -28,12 +31,12 @@ export const NavBar: React.FC = () => {
   };
   
   return (
-    <header className="border-b bg-white shadow-sm">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-50 bg-white dark:bg-neutral-dark border-b shadow-sm">
+      <div className="container mx-auto h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <motion.div 
             className="w-9 h-9 flex items-center justify-center"
-            whileHover={{ scale: 1.1 }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             <img 
@@ -43,7 +46,7 @@ export const NavBar: React.FC = () => {
             />
           </motion.div>
           <motion.span 
-            className="text-xl font-bold font-poppins text-green-600"
+            className="text-xl font-semibold font-poppins text-primary-600 dark:text-primary-400"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
@@ -57,8 +60,9 @@ export const NavBar: React.FC = () => {
             variant="ghost"
             size="sm"
             onClick={handleLanguageToggle}
-            className="text-green-700 hover:text-green-800 hover:bg-green-50 transition-colors"
+            className="text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:text-primary-300 dark:hover:text-primary-200 dark:hover:bg-primary-900/20 transition-colors"
           >
+            <Globe className="w-4 h-4 mr-1" />
             {currentLanguage === "en" ? "हिंदी" : "English"}
           </Button>
           
@@ -66,44 +70,46 @@ export const NavBar: React.FC = () => {
             <div className="flex items-center gap-3">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full">
+                  <Button variant="ghost" size="icon" className="rounded-full h-9 w-9 p-0">
                     <Avatar>
                       <AvatarImage src={user.photoURL} />
-                      <AvatarFallback className="bg-green-100 text-green-700">{user.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback className="bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300">
+                        {user.name.charAt(0)}
+                      </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-white border-green-100">
-                  <DropdownMenuItem asChild className="hover:bg-green-50 cursor-pointer">
-                    <Link to="/">{t("home")}</Link>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{user.name}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/settings" className="flex items-center">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>{t("profile")}</span>
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="hover:bg-green-50 cursor-pointer">
-                    <Link to="/record">{t("record")}</Link>
+                  <DropdownMenuItem asChild>
+                    <Link to="/settings" className="flex items-center">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>{t("settings")}</span>
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="hover:bg-green-50 cursor-pointer">
-                    <Link to="/archive">{t("archive")}</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="hover:bg-green-50 cursor-pointer">
-                    <Link to="/translate">{t("translate")}</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="hover:bg-green-50 cursor-pointer">
-                    <Link to="/upload">{t("upload")}</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="hover:bg-green-50 cursor-pointer">
-                    <Link to="/settings">{t("settings")}</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="hover:bg-green-50 cursor-pointer">
-                    <Link to="/about">{t("aboutAWAaz")}</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={logout} className="hover:bg-green-50 cursor-pointer">
-                    {t("logout")}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logout} className="flex items-center text-destructive focus:text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>{t("logout")}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
           ) : (
             <Button 
-              className="bg-green-600 hover:bg-green-700 transition-colors"
+              className="bg-primary hover:bg-primary-600 transition-colors"
               onClick={handleSignInClick}
             >
               {t("signIn")}

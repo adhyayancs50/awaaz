@@ -22,6 +22,7 @@ import { SettingsProvider } from "./contexts/SettingsContext";
 import { RecorderProvider } from "./contexts/RecorderContext";
 import { TranslationProvider } from "./contexts/TranslationContext";
 import { AnimatePresence } from "framer-motion";
+import "./App.css";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
@@ -31,8 +32,10 @@ const App = () => {
   
   // Apply global font styling
   useEffect(() => {
-    // Add Poppins font to the document
-    document.body.classList.add('font-poppins');
+    // Clean up any leftover classes from old design
+    document.body.classList.remove('font-poppins');
+    // Add new default font to the document
+    document.body.classList.add('font-inter');
   }, []);
   
   const handleSplashFinished = () => {
