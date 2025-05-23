@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 type TranslationContextType = {
@@ -221,7 +220,6 @@ const translations = {
     backToList: "Back to List",
     close: "Close",
     noRecordingsInThread: "No recordings in this thread",
-    // New translation keys
     fromForgottenToForever: "From Forgotten To Forever",
     regionsCovered: "Regions Covered",
     languagePreference: "Language Preference",
@@ -425,7 +423,6 @@ const translations = {
     backToList: "सूची पर वापस जाएँ",
     close: "बंद करें",
     noRecordingsInThread: "इस श्रृंखला में कोई रिकॉर्डिंग नहीं है",
-    // New translations in Hindi
     fromForgottenToForever: "भूले से हमेशा के लिए",
     regionsCovered: "कवर किए गए क्षेत्र",
     languagePreference: "भाषा प्राथमिकता",
