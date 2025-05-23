@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User } from "@/types";
 import { toast } from "@/components/ui/use-toast";
@@ -12,8 +11,13 @@ interface AuthContextType {
   updateDisplayName: (displayName: string) => void;
   deleteAccount: () => Promise<void>;
   isLoading: boolean;
-  startEmailVerification: (email: string, displayName: string) => Promise<boolean>;
+  startEmailVerification: (data: { email: string, displayName: string }) => Promise<boolean>;
   session: any;
+}
+
+interface VerificationData {
+  email: string;
+  displayName: string;
 }
 
 const defaultUser: User = {
@@ -168,7 +172,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const startEmailVerification = async (email: string, displayName: string) => {
+  const startEmailVerification = async (data: VerificationData): Promise<boolean> => {
     setIsLoading(true);
     try {
       // Call our edge function to start email verification
@@ -180,20 +184,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           'Authorization': `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
         },
         body: JSON.stringify({ 
-          email, 
-          display_name: displayName 
+          email: data.email, 
+          display_name: data.displayName 
         }),
       });
       
-      const data = await response.json();
+      const responseData = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.error || "Failed to send verification email");
+        throw new Error(responseData.error || "Failed to send verification email");
       }
       
       toast({
         title: "Verification email sent",
-        description: `Please check ${email} for a verification link.`,
+        description: `Please check ${data.email} for a verification link.`,
       });
       
       return true;
@@ -263,7 +267,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return;
     
     try {
-      // Delete user account
+      // Fix: Use .rpc() without passing any argument as 'delete_user' doesn't expect parameters
       const { error } = await supabase.rpc('delete_user');
       
       if (error) throw error;
