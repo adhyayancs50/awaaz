@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User } from "@/types";
 import { toast } from "@/components/ui/use-toast";
