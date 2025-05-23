@@ -6,7 +6,7 @@ import { useRecordings } from "@/contexts/RecordingContext";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Archive, Globe, Headphones, Languages, Mic, Upload, Users } from "lucide-react";
+import { Archive, Globe, Headphones, Languages, Mic, Upload, Users, Map } from "lucide-react";
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -46,7 +46,7 @@ const HomePage: React.FC = () => {
           {t("welcomeBack")}, {user?.name || t("guest")}
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          {t("preserveLanguagesSubtitle")}
+          {t("fromForgottenToForever")}
         </p>
       </motion.div>
 
@@ -63,7 +63,7 @@ const HomePage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <motion.div variants={item}>
             <Link to="/record" className="block h-full">
-              <Card className="h-full bg-white dark:bg-neutral-dark border border-border hover:border-primary-200 dark:hover:border-primary-900 hover:shadow-card transition-all duration-300 overflow-hidden relative group">
+              <Card className="h-full bg-white dark:bg-neutral-dark border border-border hover:border-primary-200 dark:hover:border-primary-900 hover:shadow-card transition-all duration-300 overflow-hidden relative group hover:opacity-80 hover:scale-[1.02]">
                 <div className="absolute inset-0 bg-gradient-to-b from-primary-50/0 to-primary-50/70 dark:from-primary-900/0 dark:to-primary-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <CardHeader className="pb-2">
                   <div className="rounded-full bg-primary-50 dark:bg-primary-900/30 w-12 h-12 flex items-center justify-center mb-2">
@@ -87,7 +87,7 @@ const HomePage: React.FC = () => {
 
           <motion.div variants={item}>
             <Link to="/archive" className="block h-full">
-              <Card className="h-full bg-white dark:bg-neutral-dark border border-border hover:border-primary-200 dark:hover:border-primary-900 hover:shadow-card transition-all duration-300 overflow-hidden relative group">
+              <Card className="h-full bg-white dark:bg-neutral-dark border border-border hover:border-primary-200 dark:hover:border-primary-900 hover:shadow-card transition-all duration-300 overflow-hidden relative group hover:opacity-80 hover:scale-[1.02]">
                 <div className="absolute inset-0 bg-gradient-to-b from-primary-50/0 to-primary-50/70 dark:from-primary-900/0 dark:to-primary-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <CardHeader className="pb-2">
                   <div className="rounded-full bg-primary-50 dark:bg-primary-900/30 w-12 h-12 flex items-center justify-center mb-2">
@@ -111,7 +111,7 @@ const HomePage: React.FC = () => {
 
           <motion.div variants={item}>
             <Link to="/translate" className="block h-full">
-              <Card className="h-full bg-white dark:bg-neutral-dark border border-border hover:border-primary-200 dark:hover:border-primary-900 hover:shadow-card transition-all duration-300 overflow-hidden relative group">
+              <Card className="h-full bg-white dark:bg-neutral-dark border border-border hover:border-primary-200 dark:hover:border-primary-900 hover:shadow-card transition-all duration-300 overflow-hidden relative group hover:opacity-80 hover:scale-[1.02]">
                 <div className="absolute inset-0 bg-gradient-to-b from-primary-50/0 to-primary-50/70 dark:from-primary-900/0 dark:to-primary-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <CardHeader className="pb-2">
                   <div className="rounded-full bg-primary-50 dark:bg-primary-900/30 w-12 h-12 flex items-center justify-center mb-2">
@@ -135,7 +135,7 @@ const HomePage: React.FC = () => {
 
           <motion.div variants={item}>
             <Link to="/upload" className="block h-full">
-              <Card className="h-full bg-white dark:bg-neutral-dark border border-border hover:border-primary-200 dark:hover:border-primary-900 hover:shadow-card transition-all duration-300 overflow-hidden relative group">
+              <Card className="h-full bg-white dark:bg-neutral-dark border border-border hover:border-primary-200 dark:hover:border-primary-900 hover:shadow-card transition-all duration-300 overflow-hidden relative group hover:opacity-80 hover:scale-[1.02]">
                 <div className="absolute inset-0 bg-gradient-to-b from-primary-50/0 to-primary-50/70 dark:from-primary-900/0 dark:to-primary-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <CardHeader className="pb-2">
                   <div className="rounded-full bg-primary-50 dark:bg-primary-900/30 w-12 h-12 flex items-center justify-center mb-2">
@@ -199,12 +199,12 @@ const HomePage: React.FC = () => {
               </div>
               
               <div className={`p-5 bg-neutral-surface dark:bg-neutral-dark/50 rounded-lg ${isMobile ? 'col-span-2' : ''}`}>
-                <Users className="h-8 w-8 text-primary-600 dark:text-primary-400 mx-auto mb-3" />
+                <Map className="h-8 w-8 text-primary-600 dark:text-primary-400 mx-auto mb-3" />
                 <p className="text-3xl font-bold text-primary-600 dark:text-primary-400">
                   {stats.contributors}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {t("activeContributors")}
+                  {t("regionsCovered")}
                 </p>
               </div>
             </div>

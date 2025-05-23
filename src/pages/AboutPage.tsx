@@ -26,7 +26,7 @@ const AboutPage: React.FC = () => {
         transition={{ duration: 0.6, delay: 0.2 }}
       >
         <Card className="mb-6">
-          <CardContent className="p-6">
+          <CardContent className="p-6 text-left">
             <p className="mb-4 text-lg">
               Awaaz is a grassroots-driven digital initiative committed to preserving the endangered languages and oral traditions of India's indigenous communities — one voice at a time.
             </p>
@@ -46,7 +46,7 @@ const AboutPage: React.FC = () => {
         </Card>
         
         <Card className="mb-6">
-          <CardContent className="p-6">
+          <CardContent className="p-6 text-left">
             <h2 className="text-2xl font-bold text-green-600 mb-4">Our Mission</h2>
             <p className="text-lg">
               To document, preserve, and celebrate the endangered tribal languages of India by building a collaborative and accessible digital archive.
@@ -55,7 +55,7 @@ const AboutPage: React.FC = () => {
         </Card>
         
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-6 text-left">
             <h2 className="text-2xl font-bold text-green-600 mb-4">Join Us</h2>
             <p className="text-lg">
               Whether you're a speaker, a translator, or simply passionate about saving our shared cultural heritage — Awaaz is your platform to contribute. Together, let's ensure that no language, no story, and no song is ever forgotten.
