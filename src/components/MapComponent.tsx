@@ -85,13 +85,11 @@ const MapComponent: React.FC<MapComponentProps> = ({ languages }) => {
     
     // Create marker content
     const markerPin = document.createElement('div');
-    markerPin.className = `w-4 h-4 bg-green-600 rounded-full border-2 border-white shadow-md flex items-center justify-center 
-                          hover:scale-125 transition-transform duration-200`;
+    markerPin.className = "w-4 h-4 bg-green-600 rounded-full border-2 border-white shadow-md flex items-center justify-center hover:scale-125 transition-transform duration-200";
     
     // Create tooltip
     const tooltip = document.createElement('div');
-    tooltip.className = 'absolute bottom-full left-1/2 transform -translate-x-1/2 -translate-y-2 bg-white p-2 rounded shadow-lg 
-                        text-xs w-32 opacity-0 invisible transition-opacity duration-200 z-10';
+    tooltip.className = "absolute bottom-full left-1/2 transform -translate-x-1/2 -translate-y-2 bg-white p-2 rounded shadow-lg text-xs w-32 opacity-0 invisible transition-opacity duration-200 z-10";
     tooltip.innerHTML = `
       <div class="font-bold text-green-700">${lang.name}</div>
       <div class="text-gray-600">${lang.count} ${t("recordings")}</div>
