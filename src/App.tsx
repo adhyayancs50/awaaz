@@ -22,6 +22,7 @@ import { SettingsProvider } from "./contexts/SettingsContext";
 import { RecorderProvider } from "./contexts/RecorderContext";
 import { TranslationProvider } from "./contexts/TranslationContext";
 import { AnimatePresence } from "framer-motion";
+import VerifyPage from "./pages/VerifyPage";
 import "./App.css";
 
 // Create a new QueryClient instance
@@ -67,6 +68,7 @@ const App = () => {
                             <Route path="/about" element={<AboutPage />} />
                             <Route path="/upload" element={<UploadPage />} />
                             <Route path="/language-map" element={<LanguageMapPage />} />
+                            <Route path="/verify" element={<VerifyPage />} />
                             <Route path="*" element={<NotFound />} />
                           </Routes>
                         </Layout>
