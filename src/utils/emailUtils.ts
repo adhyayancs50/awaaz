@@ -10,33 +10,63 @@ export interface VerificationEmailOptions {
 
 export const sendVerificationEmail = async ({ to, name, token, baseUrl }: VerificationEmailOptions): Promise<boolean> => {
   try {
-    // In a browser environment, we need to use an API endpoint to send emails
-    // For now, we'll simulate a successful email send for testing purposes
-    
+    // Create the verification link
     const verificationLink = `${baseUrl}/verify?token=${token}`;
     
-    console.log("Email would be sent with the following details:");
-    console.log(`To: ${to}`);
-    console.log(`From: noreply@myawaaz.com`);
-    console.log(`Subject: Verify Your Email Address for Awaaz`);
-    console.log(`Name: ${name}`);
-    console.log(`Verification Link: ${verificationLink}`);
-    console.log(`SMTP: smtpout.secureserver.net:465 (SSL)`);
+    // In a browser environment, we need to use an API endpoint to send emails
+    // since we can't use direct SMTP connections
+    const response = await fetch('/api/send-verification-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        to, 
+        name, 
+        token, 
+        verificationLink,
+        subject: 'Verify Your Email Address for Awaaz',
+      }),
+    });
     
-    // In production, this would be replaced with a call to a server endpoint or edge function
-    // that uses Nodemailer with the SMTP settings you've provided
-    // const response = await fetch('/api/send-verification-email', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ to, name, token, baseUrl }),
-    // });
-    // return response.ok;
+    // For debugging purposes, log the response
+    console.log("Email API Response:", await response.text());
     
-    // For testing purposes, always return true to simulate successful email sending
+    if (!response.ok) {
+      throw new Error(`Failed to send email: ${response.statusText}`);
+    }
+    
     return true;
   } catch (error) {
     console.error("Email sending error:", error);
     return false;
+  }
+};
+
+export const testEmailSending = async (to: string): Promise<{success: boolean, message: string}> => {
+  try {
+    const response = await fetch('/api/test-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { 
+        success: false, 
+        message: errorData.error || "Failed to send test email" 
+      };
+    }
+    
+    return { 
+      success: true, 
+      message: "Test email sent successfully! Please check your inbox." 
+    };
+  } catch (error) {
+    console.error("Test email error:", error);
+    return { 
+      success: false, 
+      message: error instanceof Error ? error.message : "Unknown error occurred" 
+    };
   }
 };
 
