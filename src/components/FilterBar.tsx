@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ContentType } from "@/types";
+import { useTranslation } from "@/contexts/TranslationContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface FilterBarProps {
   searchTerm: string;
@@ -12,13 +14,15 @@ interface FilterBarProps {
     contentType: ContentType | null;
     language: string | null;
     tribe: string | null;
+    threadOnly?: boolean;
   };
   availableFilters: {
     languages: string[];
     tribes: string[];
   };
-  onFilterChange: (type: "contentType" | "language" | "tribe", value: string | null) => void;
+  onFilterChange: (type: "contentType" | "language" | "tribe" | "threadOnly", value: any) => void;
   onClearFilters: () => void;
+  showThreadFilter?: boolean;
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({
@@ -27,12 +31,17 @@ const FilterBar: React.FC<FilterBarProps> = ({
   activeFilters,
   availableFilters,
   onFilterChange,
-  onClearFilters
+  onClearFilters,
+  showThreadFilter = false
 }) => {
+  const { t } = useTranslation();
+  const isMobile = useIsMobile();
+  
   const hasActiveFilters = 
     activeFilters.contentType !== null || 
     activeFilters.language !== null || 
-    activeFilters.tribe !== null;
+    activeFilters.tribe !== null ||
+    (showThreadFilter && activeFilters.threadOnly);
     
   return (
     <div className="mb-6 space-y-3">
@@ -40,14 +49,14 @@ const FilterBar: React.FC<FilterBarProps> = ({
         <Input
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search recordings..."
+          placeholder={t("searchRecordings")}
           className="pr-10"
         />
         <span className="absolute right-3 top-2.5 text-muted-foreground">🔍</span>
       </div>
       
       <div>
-        <div className="flex flex-wrap gap-2 mb-2">
+        <div className={`flex flex-wrap gap-2 mb-2 ${isMobile ? 'justify-center' : ''}`}>
           <Badge
             variant={activeFilters.contentType === ContentType.WORD ? "default" : "outline"}
             className="cursor-pointer hover:bg-primary/20"
@@ -58,7 +67,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
               )
             }
           >
-            Words
+            {t("word")}
           </Badge>
           
           <Badge
@@ -71,7 +80,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
               )
             }
           >
-            Stories
+            {t("story")}
           </Badge>
           
           <Badge
@@ -84,8 +93,23 @@ const FilterBar: React.FC<FilterBarProps> = ({
               )
             }
           >
-            Songs
+            {t("song")}
           </Badge>
+          
+          {showThreadFilter && (
+            <Badge
+              variant={activeFilters.threadOnly ? "default" : "outline"}
+              className="cursor-pointer hover:bg-primary/20"
+              onClick={() => 
+                onFilterChange(
+                  "threadOnly", 
+                  !activeFilters.threadOnly
+                )
+              }
+            >
+              {t("storyThreads")}
+            </Badge>
+          )}
           
           {availableFilters.languages.map(lang => (
             <Badge
@@ -127,7 +151,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
             className="text-xs px-2 h-7"
             onClick={onClearFilters}
           >
-            Clear filters
+            {t("clearFilters")}
           </Button>
         )}
       </div>

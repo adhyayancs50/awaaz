@@ -8,11 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Home, FileAudio, Book, Languages, Upload } from "lucide-react";
 import { motion } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const HomePage: React.FC = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
   const { getStats } = useRecordings();
+  const isMobile = useIsMobile();
 
   // Get real-time stats from recordings
   const stats = getStats();
@@ -134,7 +136,7 @@ const HomePage: React.FC = () => {
             <h3 className="text-xl font-medium text-green-700 mb-4 text-center">
               {t("communityStats")}
             </h3>
-            <div className="grid grid-cols-3 gap-4 text-center">
+            <div className={`grid ${isMobile ? 'grid-cols-1 gap-2' : 'grid-cols-3 gap-4'} text-center`}>
               <div className="p-4">
                 <p className="text-3xl font-bold text-green-600">{stats.languages}</p>
                 <p className="text-sm text-muted-foreground">{t("languagesArchived")}</p>

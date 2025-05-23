@@ -6,6 +6,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Home, FileAudio, Book, Settings, Languages, Upload, Map } from "lucide-react";
 import { useTranslation } from "@/contexts/TranslationContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -16,47 +17,56 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   
   return (
     <div className="min-h-screen flex flex-col bg-neutral-light bg-tribal-pattern-light dark:bg-tribal-pattern-dark">
       <NavBar />
       
       {user?.isLoggedIn && (
-        <div className="container mx-auto px-4 py-4 flex justify-center">
+        <div className="container mx-auto px-4 py-4 flex justify-center overflow-x-auto">
           <Tabs 
             defaultValue={location.pathname} 
             className="w-full max-w-xl"
             onValueChange={(value) => navigate(value)}
           >
-            <TabsList className="grid w-full grid-cols-7 p-1 bg-green-100 rounded-lg">
-              <TabsTrigger value="/" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-2 items-center">
+            <TabsList className={`grid w-full ${isMobile ? 'grid-cols-4 gap-1' : 'grid-cols-7'} p-1 bg-green-100 rounded-lg`}>
+              <TabsTrigger value="/" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-1 items-center">
                 <Home className="w-4 h-4" />
-                <span>{t("home")}</span>
+                {!isMobile && <span>{t("home")}</span>}
               </TabsTrigger>
-              <TabsTrigger value="/record" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-2 items-center">
+              <TabsTrigger value="/record" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-1 items-center">
                 <FileAudio className="w-4 h-4" />
-                <span>{t("record")}</span>
+                {!isMobile && <span>{t("record")}</span>}
               </TabsTrigger>
-              <TabsTrigger value="/archive" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-2 items-center">
+              <TabsTrigger value="/archive" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-1 items-center">
                 <Book className="w-4 h-4" />
-                <span>{t("archive")}</span>
+                {!isMobile && <span>{t("archive")}</span>}
               </TabsTrigger>
-              <TabsTrigger value="/translate" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-2 items-center">
+              <TabsTrigger value="/translate" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-1 items-center">
                 <Languages className="w-4 h-4" />
-                <span>{t("translate")}</span>
+                {!isMobile && <span>{t("translate")}</span>}
               </TabsTrigger>
-              <TabsTrigger value="/upload" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-2 items-center">
-                <Upload className="w-4 h-4" />
-                <span>{t("upload")}</span>
-              </TabsTrigger>
-              <TabsTrigger value="/language-map" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-2 items-center">
-                <Map className="w-4 h-4" />
-                <span>{t("map")}</span>
-              </TabsTrigger>
-              <TabsTrigger value="/settings" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-2 items-center">
-                <Settings className="w-4 h-4" />
-                <span>{t("settings")}</span>
-              </TabsTrigger>
+              {isMobile ? (
+                <TabsTrigger value="#more" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-1 items-center" onClick={() => navigate('/settings')}>
+                  <Settings className="w-4 h-4" />
+                </TabsTrigger>
+              ) : (
+                <>
+                  <TabsTrigger value="/upload" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-1 items-center">
+                    <Upload className="w-4 h-4" />
+                    <span>{t("upload")}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="/language-map" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-1 items-center">
+                    <Map className="w-4 h-4" />
+                    <span>{t("map")}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="/settings" className="data-[state=active]:bg-white data-[state=active]:text-green-700 flex gap-1 items-center">
+                    <Settings className="w-4 h-4" />
+                    <span>{t("settings")}</span>
+                  </TabsTrigger>
+                </>
+              )}
             </TabsList>
           </Tabs>
         </div>

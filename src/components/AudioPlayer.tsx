@@ -7,11 +7,12 @@ import { formatTime } from "@/lib/utils";
 interface AudioPlayerProps {
   audioUrl: string;
   className?: string;
+  autoPlay?: boolean;
 }
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, className }) => {
+const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, className, autoPlay = false }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(autoPlay);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   
@@ -27,12 +28,23 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, className }) => {
     audio.addEventListener("loadedmetadata", handleLoadedMetadata);
     audio.addEventListener("ended", handleEnded);
     
+    // Handle autoPlay
+    if (autoPlay) {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.error("AutoPlay failed:", error);
+          setIsPlaying(false);
+        });
+      }
+    }
+    
     return () => {
       audio.removeEventListener("timeupdate", handleTimeUpdate);
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
       audio.removeEventListener("ended", handleEnded);
     };
-  }, [audioUrl]);
+  }, [audioUrl, autoPlay]);
   
   const togglePlayPause = () => {
     const audio = audioRef.current;
