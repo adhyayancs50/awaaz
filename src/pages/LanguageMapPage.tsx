@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useMemo } from "react";
 import { useRecordings } from "@/contexts/RecordingContext";
 import { useTranslation } from "@/contexts/TranslationContext";
@@ -87,11 +86,11 @@ const LanguageMapPage: React.FC = () => {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="w-full mt-2 border-green-200 hover:bg-green-50"
+                  className="w-full mt-4 border-green-200 hover:bg-green-50 py-2"
                   onClick={() => navigate('/archive', { state: { filterLanguage: lang.name } })}
                 >
                   <ExternalLink className="mr-2 h-4 w-4" />
-                  {t("viewRecordings")}
+                  <span>{t("viewRecordings")}</span>
                 </Button>
               </div>
             </CardContent>

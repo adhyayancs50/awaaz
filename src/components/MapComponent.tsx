@@ -25,7 +25,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ languages }) => {
   const [mapLoaded, setMapLoaded] = useState(false);
   
   useEffect(() => {
-    // If no map libraries are available, load using an image for simplicity
+    // Set up the map
     setupImageMap();
   }, [languages]);
   
@@ -37,12 +37,16 @@ const MapComponent: React.FC<MapComponentProps> = ({ languages }) => {
     const existingMarkers = mapRef.current.querySelectorAll('.language-marker');
     existingMarkers.forEach(marker => marker.remove());
     
-    // Set the background image container
+    // Set the background image container with India outline map
     mapRef.current.style.backgroundImage = 'url(/lovable-uploads/india-map.png)';
     mapRef.current.style.backgroundSize = 'contain';
     mapRef.current.style.backgroundPosition = 'center';
     mapRef.current.style.backgroundRepeat = 'no-repeat';
     mapRef.current.style.position = 'relative';
+    
+    // Add a border to highlight the map outline
+    mapRef.current.style.border = '2px solid #10b981';
+    mapRef.current.style.borderRadius = '8px';
     
     // Add markers for each language
     languages.forEach(lang => {
@@ -51,10 +55,13 @@ const MapComponent: React.FC<MapComponentProps> = ({ languages }) => {
       if (coordinates) {
         addMarker(lang, coordinates.x, coordinates.y);
       } else {
-        // If region not found, place marker in default location with some random offset
-        const randomX = 45 + (Math.random() * 10);
-        const randomY = 50 + (Math.random() * 10);
+        // If region not found, place marker in center of India with small random offset
+        const randomX = 45 + (Math.random() * 10) - 5; // Center of India with offset
+        const randomY = 50 + (Math.random() * 10) - 5;
         addMarker(lang, randomX, randomY);
+        
+        // Log warning for missing region coordinates
+        console.warn(`No coordinates found for region: ${lang.region}`);
       }
     });
     
@@ -62,6 +69,8 @@ const MapComponent: React.FC<MapComponentProps> = ({ languages }) => {
   };
   
   const getCoordinatesForRegion = (region: string): { x: number, y: number } | null => {
+    if (!region) return null;
+    
     // Normalize region name for comparison
     const normalizedRegion = region.toLowerCase().trim();
     
@@ -82,14 +91,15 @@ const MapComponent: React.FC<MapComponentProps> = ({ languages }) => {
     marker.className = 'language-marker absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2';
     marker.style.left = `${x}%`;
     marker.style.top = `${y}%`;
+    marker.style.zIndex = '10';
     
     // Create marker content
     const markerPin = document.createElement('div');
-    markerPin.className = 'w-4 h-4 bg-green-600 rounded-full border-2 border-white shadow-md flex items-center justify-center hover:scale-125 transition-transform duration-200';
+    markerPin.className = "w-4 h-4 bg-green-600 rounded-full border-2 border-white shadow-md flex items-center justify-center hover:scale-125 transition-transform duration-200";
     
-    // Create tooltip - Fix: Combining the multiline string into a single line
+    // Create tooltip
     const tooltip = document.createElement('div');
-    tooltip.className = 'absolute bottom-full left-1/2 transform -translate-x-1/2 -translate-y-2 bg-white p-2 rounded shadow-lg text-xs w-32 opacity-0 invisible transition-opacity duration-200 z-10';
+    tooltip.className = "absolute bottom-full left-1/2 transform -translate-x-1/2 -translate-y-2 bg-white p-2 rounded shadow-lg text-xs w-32 opacity-0 invisible transition-opacity duration-200 z-10";
     tooltip.innerHTML = `
       <div class="font-bold text-green-700">${lang.name}</div>
       <div class="text-gray-600">${lang.count} ${t("recordings")}</div>

@@ -23,6 +23,7 @@ const RecordingControls: React.FC = () => {
   const { t } = useTranslation();
   
   const [language, setLanguage] = useState("");
+  const [region, setRegion] = useState(""); // Added region state
   const [showLanguagePrompt, setShowLanguagePrompt] = useState(false);
   const [selectedContentType, setSelectedContentType] = useState<ContentType | null>(null);
   
@@ -44,7 +45,7 @@ const RecordingControls: React.FC = () => {
     }
     
     if (selectedContentType) {
-      await recordAudio(selectedContentType);
+      await recordAudio(selectedContentType, region); // Pass region to recordAudio
       setShowLanguagePrompt(false);
     }
   };
@@ -53,6 +54,7 @@ const RecordingControls: React.FC = () => {
     setShowLanguagePrompt(false);
     setSelectedContentType(null);
     setLanguage("");
+    setRegion(""); // Reset region too
   };
   
   return (
@@ -78,6 +80,18 @@ const RecordingControls: React.FC = () => {
                     className="border-green-300 focus:border-green-500 focus:ring-green-500"
                   />
                 </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="region">{t("region")} ({t("required")})</Label>
+                  <Input
+                    id="region"
+                    value={region}
+                    onChange={(e) => setRegion(e.target.value)}
+                    placeholder={t("enterRegionOrState")}
+                    className="border-green-300 focus:border-green-500 focus:ring-green-500"
+                  />
+                </div>
+                
                 <div className="flex justify-between gap-2">
                   <Button 
                     variant="outline" 
@@ -104,14 +118,14 @@ const RecordingControls: React.FC = () => {
                   className="h-16 text-lg border-2 border-green-600 hover:bg-green-50 text-green-700"
                   onClick={() => handleContentTypeSelection(ContentType.WORD)}
                 >
-                  {t("singleSentence")}
+                  Phrase
                 </Button>
                 <Button 
                   variant="outline"
                   className="h-16 text-lg border-2 border-green-600 hover:bg-green-50 text-green-700"
                   onClick={() => handleContentTypeSelection(ContentType.STORY)}
                 >
-                  {t("conversation")}
+                  Stories
                 </Button>
                 <Button 
                   variant="outline"
@@ -136,8 +150,8 @@ const RecordingControls: React.FC = () => {
           
           <div className="text-center">
             <h2 className="text-xl font-medium mb-1">
-              {contentType === ContentType.WORD ? t("singleSentence") : 
-               contentType === ContentType.STORY ? t("conversation") : 
+              {contentType === ContentType.WORD ? "Phrase" : 
+               contentType === ContentType.STORY ? "Stories" : 
                t("song")}
             </h2>
             <p className="text-2xl font-bold">{formatTime(duration)}</p>

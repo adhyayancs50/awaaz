@@ -24,6 +24,7 @@ const RecordingForm: React.FC = () => {
     contentType: recorderState.contentType || ContentType.WORD,
     language: "",
     speaker: "",
+    region: recorderState.region || "", // Added region from recorderState
   });
   
   // Set default language from localStorage if available
@@ -32,7 +33,12 @@ const RecordingForm: React.FC = () => {
     if (lastUsedLanguage) {
       setFormData(prev => ({ ...prev, language: lastUsedLanguage }));
     }
-  }, []);
+    
+    // Set region from recorder state if available
+    if (recorderState.region) {
+      setFormData(prev => ({ ...prev, region: recorderState.region }));
+    }
+  }, [recorderState.region]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -69,6 +75,15 @@ const RecordingForm: React.FC = () => {
       return;
     }
     
+    if (!formData.region.trim()) {
+      toast({
+        title: t("error"),
+        description: "Please enter the region or state",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     // Save the language preference for future recordings
     localStorage.setItem("awaaz_last_language", formData.language);
     
@@ -79,6 +94,7 @@ const RecordingForm: React.FC = () => {
       duration: recorderState.duration,
       language: formData.language,
       speaker: formData.speaker,
+      region: formData.region, // Add region to recording
     });
     
     resetRecording();
@@ -124,6 +140,19 @@ const RecordingForm: React.FC = () => {
             value={formData.language}
             onChange={handleChange}
             placeholder={t("languageName")}
+            required
+            className="border-green-300 focus:border-green-500 focus:ring-green-500"
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="region">{t("region")} ({t("required")})</Label>
+          <Input
+            id="region"
+            name="region"
+            value={formData.region}
+            onChange={handleChange}
+            placeholder={t("enterRegionOrState")}
             required
             className="border-green-300 focus:border-green-500 focus:ring-green-500"
           />
