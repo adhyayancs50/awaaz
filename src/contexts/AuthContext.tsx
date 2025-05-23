@@ -267,7 +267,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return;
     
     try {
-      // Fix: Use .rpc() method without passing any parameters
+      // Fix: Remove parameter from rpc call - it should be called with no arguments
       const { error } = await supabase.rpc('delete_user');
       
       if (error) throw error;
