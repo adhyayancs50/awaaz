@@ -237,8 +237,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           data: {
             name,
           },
-          // Use the full domain for email verification
-          emailRedirectTo: `${window.location.origin}/verify`,
+          // Use the full domain for email verification - update to myawaaz.com
+          emailRedirectTo: `https://myawaaz.com/verify`,
         },
       });
       
@@ -440,11 +440,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const resendVerificationEmail = async (email: string) => {
     setIsLoading(true);
     try {
+      // Update the redirect URL to use the production domain
       const { error } = await supabase.auth.resend({
         type: 'signup',
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/verify`,
+          emailRedirectTo: `https://myawaaz.com/verify`,
         },
       });
       

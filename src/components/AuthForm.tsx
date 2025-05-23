@@ -16,12 +16,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { motion } from "framer-motion";
-import { LogIn, UserPlus, Mail, Lock, User } from "lucide-react";
+import { LogIn, UserPlus, Mail, Lock, User, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const AuthForm: React.FC = () => {
   const { login, register, isLoading } = useAuth();
   const { toast } = useToast();
   const { t } = useTranslation();
+  
+  const [activeTab, setActiveTab] = useState<string>("login");
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
   
   const [loginForm, setLoginForm] = useState({
     email: "",
@@ -69,8 +74,29 @@ const AuthForm: React.FC = () => {
     
     try {
       await register(registerForm.email, registerForm.password, registerForm.displayName);
+      setRegistrationSuccess(true);
+      setRegisteredEmail(registerForm.email);
+      // Reset the form
+      setRegisterForm({
+        email: "",
+        password: "",
+        confirmPassword: "",
+        displayName: "",
+      });
     } catch (error) {
       // Error is handled in the auth context
+    }
+  };
+
+  const handleResendVerification = async () => {
+    try {
+      await auth.resendVerificationEmail(registeredEmail);
+      toast({
+        title: "Verification email sent",
+        description: "Please check your inbox for the verification link.",
+      });
+    } catch (error) {
+      // Error handled in auth context
     }
   };
   
@@ -81,7 +107,7 @@ const AuthForm: React.FC = () => {
       transition={{ duration: 0.5 }}
     >
       <Card className="w-full max-w-md mx-auto shadow-card">
-        <Tabs defaultValue="login" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login" className="data-[state=active]:bg-primary data-[state=active]:text-white">
               <LogIn className="mr-2 h-4 w-4" />
@@ -149,94 +175,124 @@ const AuthForm: React.FC = () => {
           </TabsContent>
           
           <TabsContent value="register">
-            <form onSubmit={handleRegister}>
-              <CardHeader>
-                <CardTitle>{t("createAccount")}</CardTitle>
-                <CardDescription>{t("joinAWAaz")}</CardDescription>
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="register-displayName" className="flex items-center gap-1.5">
-                    <User className="h-3.5 w-3.5" />
-                    {t("whatToCallYou")}
-                  </Label>
-                  <Input
-                    id="register-displayName"
-                    name="displayName"
-                    type="text"
-                    value={registerForm.displayName}
-                    onChange={handleRegisterChange}
-                    required
-                    placeholder={t("yourName")}
-                    className="border-input focus-ring bg-background"
-                  />
-                </div>
+            {registrationSuccess ? (
+              <CardContent className="space-y-4 py-6">
+                <Alert className="bg-green-50 border-green-200">
+                  <AlertCircle className="h-5 w-5 text-green-500" />
+                  <AlertDescription className="text-green-800">
+                    Account created successfully! Please check your email to verify your account.
+                  </AlertDescription>
+                </Alert>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="register-email" className="flex items-center gap-1.5">
-                    <Mail className="h-3.5 w-3.5" />
-                    {t("email")}
-                  </Label>
-                  <Input
-                    id="register-email"
-                    name="email"
-                    type="email"
-                    value={registerForm.email}
-                    onChange={handleRegisterChange}
-                    required
-                    placeholder="you@example.com"
-                    className="border-input focus-ring bg-background"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="register-password" className="flex items-center gap-1.5">
-                    <Lock className="h-3.5 w-3.5" />
-                    {t("password")}
-                  </Label>
-                  <Input
-                    id="register-password"
-                    name="password"
-                    type="password"
-                    value={registerForm.password}
-                    onChange={handleRegisterChange}
-                    required
-                    minLength={6}
-                    placeholder="••••••••"
-                    className="border-input focus-ring bg-background"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="register-confirmPassword" className="flex items-center gap-1.5">
-                    <Lock className="h-3.5 w-3.5" />
-                    {t("confirmPassword")}
-                  </Label>
-                  <Input
-                    id="register-confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    value={registerForm.confirmPassword}
-                    onChange={handleRegisterChange}
-                    required
-                    minLength={6}
-                    placeholder="••••••••"
-                    className="border-input focus-ring bg-background"
-                  />
+                <div className="text-center mt-4">
+                  <p className="text-muted-foreground mb-4">
+                    Didn't receive the verification email?
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    onClick={handleResendVerification}
+                    className="mr-2"
+                  >
+                    Resend Verification Email
+                  </Button>
+                  <Button 
+                    variant="ghost"
+                    onClick={() => setActiveTab("login")}
+                  >
+                    Return to Login
+                  </Button>
                 </div>
               </CardContent>
-              
-              <CardFooter>
-                <Button 
-                  type="submit" 
-                  className="w-full bg-primary hover:bg-primary-600 active:bg-primary-700" 
-                  disabled={isLoading}
-                >
-                  {isLoading ? t("creating") : t("createAccount")}
-                </Button>
-              </CardFooter>
-            </form>
+            ) : (
+              <form onSubmit={handleRegister}>
+                <CardHeader>
+                  <CardTitle>{t("createAccount")}</CardTitle>
+                  <CardDescription>{t("joinAWAaz")}</CardDescription>
+                </CardHeader>
+                
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="register-displayName" className="flex items-center gap-1.5">
+                      <User className="h-3.5 w-3.5" />
+                      {t("whatToCallYou")}
+                    </Label>
+                    <Input
+                      id="register-displayName"
+                      name="displayName"
+                      type="text"
+                      value={registerForm.displayName}
+                      onChange={handleRegisterChange}
+                      required
+                      placeholder={t("yourName")}
+                      className="border-input focus-ring bg-background"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="register-email" className="flex items-center gap-1.5">
+                      <Mail className="h-3.5 w-3.5" />
+                      {t("email")}
+                    </Label>
+                    <Input
+                      id="register-email"
+                      name="email"
+                      type="email"
+                      value={registerForm.email}
+                      onChange={handleRegisterChange}
+                      required
+                      placeholder="you@example.com"
+                      className="border-input focus-ring bg-background"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="register-password" className="flex items-center gap-1.5">
+                      <Lock className="h-3.5 w-3.5" />
+                      {t("password")}
+                    </Label>
+                    <Input
+                      id="register-password"
+                      name="password"
+                      type="password"
+                      value={registerForm.password}
+                      onChange={handleRegisterChange}
+                      required
+                      minLength={6}
+                      placeholder="••••••••"
+                      className="border-input focus-ring bg-background"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="register-confirmPassword" className="flex items-center gap-1.5">
+                      <Lock className="h-3.5 w-3.5" />
+                      {t("confirmPassword")}
+                    </Label>
+                    <Input
+                      id="register-confirmPassword"
+                      name="confirmPassword"
+                      type="password"
+                      value={registerForm.confirmPassword}
+                      onChange={handleRegisterChange}
+                      required
+                      minLength={6}
+                      placeholder="••••••••"
+                      className="border-input focus-ring bg-background"
+                    />
+                  </div>
+                </CardContent>
+                
+                <CardFooter>
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-primary hover:bg-primary-600 active:bg-primary-700" 
+                    disabled={isLoading}
+                  >
+                    {isLoading ? t("creating") : t("createAccount")}
+                  </Button>
+                </CardFooter>
+              </form>
+            )}
           </TabsContent>
         </Tabs>
       </Card>

@@ -8,6 +8,7 @@ import { Loader2, CheckCircle, XCircle, RefreshCcw } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTranslation } from "@/contexts/TranslationContext";
 import EmptyState from "@/components/EmptyState";
+import { useToast } from "@/hooks/use-toast";
 
 const VerifyPage: React.FC = () => {
   const { verifyEmail, resendVerificationEmail } = useAuth();
@@ -18,6 +19,7 @@ const VerifyPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
+  const { toast } = useToast();
   
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -36,6 +38,11 @@ const VerifyPage: React.FC = () => {
         
         if (result) {
           setIsSuccess(true);
+          toast({
+            title: "Email verified",
+            description: "Your email has been successfully verified. You will be redirected shortly.",
+          });
+          
           // Auto-redirect to home after successful verification
           setTimeout(() => {
             navigate("/");
@@ -56,7 +63,7 @@ const VerifyPage: React.FC = () => {
     if (userEmail) {
       setEmail(userEmail);
     }
-  }, [location, verifyEmail, navigate]);
+  }, [location, verifyEmail, navigate, toast]);
   
   const handleResendVerification = async () => {
     if (!email) {
@@ -66,9 +73,11 @@ const VerifyPage: React.FC = () => {
     
     try {
       await resendVerificationEmail(email);
+      toast({
+        title: "Verification email sent",
+        description: "A new verification email has been sent to your inbox.",
+      });
       setError(null);
-      setIsSuccess(false); // Reset success state
-      alert("Verification email has been sent again. Please check your inbox.");
     } catch (err: any) {
       setError(err.message || "Failed to resend verification email");
     }
