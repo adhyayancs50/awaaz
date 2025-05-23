@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User } from "@/types";
 import { toast } from "@/components/ui/use-toast";
@@ -267,7 +268,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return;
     
     try {
-      // Fix: Remove parameter from rpc call - it should be called with no arguments
+      // Remove parameter from rpc call - it should be called with no arguments
       const { error } = await supabase.rpc('delete_user');
       
       if (error) throw error;

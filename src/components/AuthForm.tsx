@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -76,7 +77,7 @@ const AuthForm: React.FC = () => {
     }
     
     try {
-      // Fix: Pass a single object to startEmailVerification
+      // Pass a single object to startEmailVerification
       const success = await startEmailVerification({
         email: registerForm.email,
         displayName: registerForm.displayName
