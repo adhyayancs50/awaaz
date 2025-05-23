@@ -24,7 +24,7 @@ const RecordingForm: React.FC = () => {
     contentType: recorderState.contentType || ContentType.WORD,
     language: "",
     speaker: "",
-    region: recorderState.region || "", // Added region from recorderState
+    region: recorderState.region || "", // Initialize region from recorderState
   });
   
   // Set default language from localStorage if available
@@ -66,7 +66,7 @@ const RecordingForm: React.FC = () => {
       return;
     }
     
-    if (!formData.language.trim()) {
+    if (!formData.language?.trim()) {
       toast({
         title: t("error"),
         description: t("languageRequired"),
@@ -75,7 +75,7 @@ const RecordingForm: React.FC = () => {
       return;
     }
     
-    if (!formData.region.trim()) {
+    if (!formData.region?.trim()) {
       toast({
         title: t("error"),
         description: "Please enter the region or state",
@@ -94,7 +94,7 @@ const RecordingForm: React.FC = () => {
       duration: recorderState.duration,
       language: formData.language,
       speaker: formData.speaker,
-      region: formData.region, // Add region to recording
+      region: formData.region, // Include region in recording
     });
     
     resetRecording();

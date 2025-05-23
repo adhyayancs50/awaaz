@@ -44,8 +44,17 @@ const RecordingControls: React.FC = () => {
       return;
     }
     
+    if (!region.trim()) {
+      toast({
+        title: t("error"),
+        description: "Please enter a region",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     if (selectedContentType) {
-      await recordAudio(selectedContentType, region); // Pass region to recordAudio
+      await recordAudio(selectedContentType, region); // Passing region to recordAudio
       setShowLanguagePrompt(false);
     }
   };

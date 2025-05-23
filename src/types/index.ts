@@ -60,6 +60,7 @@ export interface RecorderState {
   isPaused: boolean;
   duration: number;
   contentType: ContentType | null;
+  region?: string; // Added region property
 }
 
 export interface RecordingFormData {
@@ -67,4 +68,5 @@ export interface RecordingFormData {
   contentType: ContentType;
   language?: string;
   speaker?: string;
+  region?: string; // Added region property
 }

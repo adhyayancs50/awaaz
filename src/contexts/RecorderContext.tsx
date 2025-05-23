@@ -6,7 +6,7 @@ import { toast } from "@/components/ui/use-toast";
 interface RecorderContextType {
   recorderState: RecorderState;
   recordingData: Blob | null;
-  recordAudio: (contentType: ContentType) => Promise<void>;
+  recordAudio: (contentType: ContentType, region?: string) => Promise<void>; // Updated to accept region parameter
   stopRecording: () => void;
   pauseRecording: () => void;
   resumeRecording: () => void;
@@ -18,7 +18,8 @@ const initialRecorderState: RecorderState = {
   isRecording: false,
   isPaused: false,
   duration: 0,
-  contentType: null
+  contentType: null,
+  region: "" // Added default empty region
 };
 
 const RecorderContext = createContext<RecorderContextType>({
@@ -44,7 +45,7 @@ export const RecorderProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const streamRef = useRef<MediaStream | null>(null);
   const timerRef = useRef<number | null>(null);
 
-  const recordAudio = async (contentType: ContentType) => {
+  const recordAudio = async (contentType: ContentType, region: string = "") => {
     try {
       // Request permission to access the microphone
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -77,7 +78,8 @@ export const RecorderProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         isRecording: true,
         isPaused: false,
         duration: 0,
-        contentType
+        contentType,
+        region // Store the region in recorderState
       });
       
       // Start timer to track duration
