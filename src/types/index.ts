@@ -1,4 +1,3 @@
-
 export enum ContentType {
   WORD = "word", // Renamed to "sentence" in UI but keeping enum the same for compatibility
   STORY = "story",
@@ -17,6 +16,7 @@ export interface User {
   email: string;
   photoURL?: string;
   isLoggedIn: boolean;
+  isVerified: boolean; // Added the isVerified property
 }
 
 export interface Recording {
