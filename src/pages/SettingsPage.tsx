@@ -28,7 +28,7 @@ const SettingsPage = () => {
   const { user, updateDisplayName, deleteAccount, logout, isLoading, updatePassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { t, currentLanguage, setLanguage } = useTranslation();
+  const { t, currentLanguage, changeLanguage } = useTranslation();
   
   const [displayName, setDisplayName] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -159,7 +159,7 @@ const SettingsPage = () => {
             <Label htmlFor="language">{t("selectLanguage")}</Label>
             <Select
               value={currentLanguage}
-              onValueChange={(value) => setLanguage(value)}
+              onValueChange={(value) => changeLanguage(value)}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder={t("selectLanguage")} />
