@@ -157,7 +157,7 @@ const translations = {
     downloadFailed: "Download Failed",
     deleteConfirmation: "Delete Confirmation",
     deleteConfirmationMessage: "Are you sure you want to delete this recording? This action cannot be undone.",
-    deleteAction: "Delete", // Changed from 'delete' to 'deleteAction'
+    delete: "Delete",
     welcome: "Welcome",
     welcomeMessage: "Preserve cultural heritage through voice.",
     statistics: "Statistics",
@@ -166,7 +166,7 @@ const translations = {
     contributors: "Contributors",
     uploadRecording: "Upload Recording",
     uploadAudioFile: "Upload Audio File",
-    uploadAction: "Upload", // Changed from 'upload' to 'uploadAction'
+    upload: "Upload",
     clickToSelectFile: "Click to Select File",
     audioFormatSupported: "MP3, WAV, and M4A formats supported",
     uploadSuccessful: "Upload Successful",
@@ -175,13 +175,13 @@ const translations = {
     pleaseSelectAudioFile: "Please select an audio file",
     pleaseEnterLanguage: "Please enter a language",
     pleaseEnterTitle: "Please enter a title",
-    enterRecordingTitleAgain: "Enter recording title", // Changed duplicate key
-    wordType: "Word", // Changed from 'word' to 'wordType'
+    enterRecordingTitle: "Enter recording title",
+    word: "Word",
     dangerZone: "Danger Zone",
     deleteAccount: "Delete Account",
     confirmDeletion: "Confirm Deletion",
     deleteAccountWarning: "This action cannot be undone. This will permanently delete your account and all associated data.",
-    deleteConfirm: "Delete", // Changed from 'delete' to 'deleteConfirm'
+    delete: "Delete",
     updateProfile: "Update Profile",
     displayName: "Display Name",
     map: "Language Map",
@@ -329,7 +329,7 @@ const translations = {
     downloadFailed: "डाउनलोड विफल रहा",
     deleteConfirmation: "हटाने की पुष्टि",
     deleteConfirmationMessage: "क्या आप वाकई इस रिकॉर्डिंग को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।",
-    deleteAction: "हटाएं", // Changed from 'delete' to 'deleteAction'
+    delete: "हटाएं",
     welcome: "स्वागत है",
     welcomeMessage: "आवाज़ के माध्यम से सांस्कृतिक विरासत का संरक्षण करें।",
     statistics: "आंकड़े",
@@ -338,7 +338,7 @@ const translations = {
     contributors: "योगदानकर्ता",
     uploadRecording: "रिकॉर्डिंग अपलोड करें",
     uploadAudioFile: "ऑडियो फ़ाइल अपलोड करें",
-    uploadAction: "अपलोड करें", // Changed from 'upload' to 'uploadAction'
+    upload: "अपलोड करें",
     clickToSelectFile: "फ़ाइल चुनने के लिए क्लिक करें",
     audioFormatSupported: "MP3, WAV, और M4A प्रारूप समर्थित हैं",
     uploadSuccessful: "अपलोड सफल",
@@ -347,13 +347,13 @@ const translations = {
     pleaseSelectAudioFile: "कृपया एक ऑडियो फ़ाइल चुनें",
     pleaseEnterLanguage: "कृपया एक भाषा दर्ज करें",
     pleaseEnterTitle: "कृपया एक शीर्षक दर्ज करें",
-    enterRecordingTitleAgain: "रिकॉर्डिंग शीर्षक दर्ज करें", // Changed duplicate key
-    wordType: "शब्द", // Changed from 'word' to 'wordType'
+    enterRecordingTitle: "रिकॉर्डिंग शीर्षक दर्ज करें",
+    word: "शब्द",
     dangerZone: "खतरा क्षेत्र",
     deleteAccount: "खाता हटाएं",
     confirmDeletion: "हटाने की पुष्टि करें",
     deleteAccountWarning: "यह क्रिया पूर्ववत नहीं की जा सकती। यह आपके खाते और सभी संबंधित डेटा को स्थायी रूप से हटा देगी।",
-    deleteConfirm: "हटाएं", // Changed from 'delete' to 'deleteConfirm'
+    delete: "हटाएं",
     updateProfile: "प्रोफाइल अपडेट करें",
     displayName: "प्रदर्शन नाम",
     map: "भाषा मानचित्र",
