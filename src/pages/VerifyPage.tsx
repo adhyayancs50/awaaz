@@ -57,7 +57,7 @@ const VerifyPage: React.FC = () => {
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
           .insert({
-            id: verificationData.id, // Using verification ID as profile ID
+            id: verificationData.id,
             email: verificationData.email,
             display_name: verificationData.display_name
           })
@@ -74,7 +74,7 @@ const VerifyPage: React.FC = () => {
         setVerified(true);
         toast({
           title: "Email verified successfully!",
-          description: "Your account has been created. You can now sign in.",
+          description: "Your account has been created. You can now set your password to complete the registration.",
         });
         
       } catch (err) {
@@ -89,7 +89,12 @@ const VerifyPage: React.FC = () => {
   }, [token, toast]);
   
   const handleContinue = () => {
-    navigate("/", { state: { openAuthForm: true } });
+    navigate("/", { state: { openAuthForm: true, verifiedEmail: true }});
+  };
+  
+  const handleResendVerification = () => {
+    // This would be implemented in a full solution
+    navigate("/", { state: { openAuthForm: true, resendVerification: true }});
   };
   
   if (loading) {
@@ -109,7 +114,7 @@ const VerifyPage: React.FC = () => {
           <AlertDescription className="text-green-700">
             <p className="mb-4">Your email has been verified and your account has been created.</p>
             <Button onClick={handleContinue} className="w-full bg-primary">
-              Continue to Login
+              Continue to Set Password
             </Button>
           </AlertDescription>
         </Alert>
@@ -118,8 +123,11 @@ const VerifyPage: React.FC = () => {
           <AlertTitle className="text-red-800">Verification Failed</AlertTitle>
           <AlertDescription className="text-red-700">
             <p className="mb-4">{error || "Unable to verify your email."}</p>
-            <Button onClick={() => navigate("/")} className="w-full bg-primary">
+            <Button onClick={() => navigate("/")} className="w-full bg-primary mb-2">
               Return to Homepage
+            </Button>
+            <Button onClick={handleResendVerification} variant="outline" className="w-full">
+              Resend Verification Email
             </Button>
           </AlertDescription>
         </Alert>

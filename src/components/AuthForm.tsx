@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,8 +16,10 @@ import { useToast } from "@/components/ui/use-toast";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { motion } from "framer-motion";
 import { LogIn, UserPlus, Mail, Lock, User } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
 const AuthForm: React.FC = () => {
+  const location = useLocation();
   const { login, register, isLoading, startEmailVerification, checkEmailExists } = useAuth();
   const { toast } = useToast();
   const { t } = useTranslation();
@@ -38,6 +39,26 @@ const AuthForm: React.FC = () => {
   });
   
   const [verificationStep, setVerificationStep] = useState<boolean>(false);
+  
+  // Handle routing state for after verification
+  useEffect(() => {
+    const state = location.state as { 
+      openAuthForm?: boolean, 
+      verifiedEmail?: boolean,
+      resendVerification?: boolean 
+    } | undefined;
+    
+    if (state?.verifiedEmail) {
+      setActiveTab("register");
+      setVerificationStep(true);
+      // We would set the email here if we passed it in the state
+    }
+    
+    if (state?.resendVerification) {
+      setActiveTab("register");
+      // We would display a resend form here
+    }
+  }, [location.state]);
   
   const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -137,6 +158,29 @@ const AuthForm: React.FC = () => {
     }
   };
   
+  const handleResendVerification = async () => {
+    if (!registerForm.email || !registerForm.displayName) {
+      toast({
+        title: "Missing Information",
+        description: "Please provide your email and name to resend the verification",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const success = await startEmailVerification({ 
+      email: registerForm.email,
+      displayName: registerForm.displayName
+    });
+    
+    if (success) {
+      toast({
+        title: "Verification Email Sent",
+        description: "Please check your inbox for the verification link",
+      });
+    }
+  };
+  
   const renderVerificationStep = () => (
     <CardContent className="space-y-4 pt-6">
       <div className="text-center mb-6">
@@ -192,14 +236,24 @@ const AuthForm: React.FC = () => {
         {isLoading ? "Setting up account..." : "Complete Registration"}
       </Button>
       
-      <div className="text-center mt-4">
+      <div className="text-center mt-4 space-y-2">
+        <p className="text-sm text-gray-600">Didn't receive the verification email?</p>
         <button 
           type="button" 
-          onClick={() => setVerificationStep(false)} 
-          className="text-sm text-gray-600 hover:text-gray-900"
+          onClick={handleResendVerification} 
+          className="text-sm text-primary hover:text-primary-700 font-medium"
         >
-          Use different email
+          Resend verification email
         </button>
+        <div className="pt-2">
+          <button 
+            type="button" 
+            onClick={() => setVerificationStep(false)} 
+            className="text-sm text-gray-600 hover:text-gray-900"
+          >
+            Use different email
+          </button>
+        </div>
       </div>
     </CardContent>
   );
