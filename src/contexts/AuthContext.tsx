@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User } from "@/types";
 import { toast } from "@/components/ui/use-toast";
@@ -12,7 +11,7 @@ interface AuthContextType {
   updateDisplayName: (displayName: string) => void;
   deleteAccount: () => Promise<void>;
   isLoading: boolean;
-  startEmailVerification: (data: { email: string, displayName: string }) => Promise<boolean>;
+  startEmailVerification: (data: VerificationData) => Promise<boolean>;
   session: any;
 }
 
