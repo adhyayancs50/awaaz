@@ -53,19 +53,19 @@ const VerifyPage: React.FC = () => {
           return;
         }
         
-        // 3. Create user profile
+        // 3. Create user profile with proper ID format
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
-          .insert([
-            { 
-              email: verificationData.email,
-              display_name: verificationData.display_name
-            }
-          ])
+          .insert({
+            id: verificationData.id, // Using verification ID as profile ID
+            email: verificationData.email,
+            display_name: verificationData.display_name
+          })
           .select()
           .single();
         
         if (profileError) {
+          console.error("Profile creation error:", profileError);
           setError("Failed to create user account");
           setLoading(false);
           return;
