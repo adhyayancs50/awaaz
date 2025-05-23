@@ -20,7 +20,7 @@ import { LogIn, UserPlus, Mail, Lock, User, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const AuthForm: React.FC = () => {
-  const { login, register, isLoading } = useAuth();
+  const { login, register, isLoading, resendVerificationEmail } = useAuth();
   const { toast } = useToast();
   const { t } = useTranslation();
   
@@ -90,7 +90,7 @@ const AuthForm: React.FC = () => {
 
   const handleResendVerification = async () => {
     try {
-      await auth.resendVerificationEmail(registeredEmail);
+      await resendVerificationEmail(registeredEmail);
       toast({
         title: "Verification email sent",
         description: "Please check your inbox for the verification link.",

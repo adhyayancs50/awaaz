@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/contexts/TranslationContext";
@@ -18,12 +17,12 @@ import { motion } from "framer-motion";
 
 export const NavBar: React.FC = () => {
   const { user, logout } = useAuth();
-  const { t, currentLanguage, setLanguage } = useTranslation();
+  const { t, changeLanguage, currentLanguage } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   
-  const handleLanguageToggle = () => {
-    setLanguage(currentLanguage === "en" ? "hi" : "en");
+  const handleLanguageChange = (lang: string) => {
+    changeLanguage(lang);
   };
   
   const handleSignInClick = () => {
@@ -59,7 +58,7 @@ export const NavBar: React.FC = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={handleLanguageToggle}
+            onClick={() => handleLanguageChange(currentLanguage === "en" ? "hi" : "en")}
             className="text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:text-primary-300 dark:hover:text-primary-200 dark:hover:bg-primary-900/20 transition-colors"
           >
             <Globe className="w-4 h-4 mr-1" />

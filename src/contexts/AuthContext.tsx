@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/types";
@@ -237,7 +236,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           data: {
             name,
           },
-          // Use the full domain for email verification - update to myawaaz.com
+          // Use the full domain for email verification
           emailRedirectTo: `https://myawaaz.com/verify`,
         },
       });
@@ -453,7 +452,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       toast({
         title: "Verification email sent",
-        description: "Please check your inbox.",
+        description: "Please check your inbox for an email from 'meri awaaz'.",
       });
       
     } catch (error: any) {

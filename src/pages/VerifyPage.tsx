@@ -75,7 +75,7 @@ const VerifyPage: React.FC = () => {
       await resendVerificationEmail(email);
       toast({
         title: "Verification email sent",
-        description: "A new verification email has been sent to your inbox.",
+        description: "A new verification email has been sent to your inbox from 'meri awaaz'.",
       });
       setError(null);
     } catch (err: any) {
