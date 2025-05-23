@@ -155,8 +155,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         title: "Registration started",
         description: "Please check your email to verify your account.",
       });
-      
-      return data;
     } catch (error: any) {
       console.error("Registration failed:", error);
       toast({
@@ -174,10 +172,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       // Call our edge function to start email verification
-      const response = await fetch(`${supabase.functions.url}/send-verification-email`, {
+      const functionsEndpoint = `${supabase.supabaseUrl}/functions/v1/send-verification-email`;
+      const response = await fetch(functionsEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabase.supabaseKey}`
         },
         body: JSON.stringify({ 
           email, 

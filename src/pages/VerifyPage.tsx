@@ -54,10 +54,12 @@ const VerifyPage = () => {
     setError("");
     
     try {
-      const response = await fetch(`${supabase.functions.url}/verify-email`, {
+      const functionsEndpoint = `${supabase.supabaseUrl}/functions/v1/verify-email`;
+      const response = await fetch(functionsEndpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${supabase.supabaseKey}`
         },
         body: JSON.stringify({ token, password }),
       });
