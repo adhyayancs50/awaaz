@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -28,10 +28,11 @@ import "./App.css";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [showSplash, setShowSplash] = useState(true);
+  // Using React hooks properly inside a component
+  const [showSplash, setShowSplash] = React.useState(true);
   
   // Apply global font styling
-  useEffect(() => {
+  React.useEffect(() => {
     // Clean up any leftover classes from old design
     document.body.classList.remove('font-poppins');
     // Add new default font to the document

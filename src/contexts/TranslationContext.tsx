@@ -243,16 +243,16 @@ const translations = {
     communityStatsDescription: "Our collective progress in preserving indigenous voices",
     languagesArchived: "Languages Archived",
     totalRecordings: "Total Recordings",
-    learnAboutAWAaz: "Learn About AWAaz", 
-    recordNewVoice: "Record New Voice", 
+    learnAboutAWAaz: "Learn About AWAaz",
+    recordNewVoice: "Record New Voice",
     browseArchive: "Browse Archive",
-    translateRecording: "Translate Recording", 
-    startRecording: "Start Recording", 
-    exploreArchive: "Explore Archive", 
-    startTranslating: "Start Translating", 
-    uploadFiles: "Upload Files", 
+    translateRecording: "Translate Recording",
+    startRecording: "Start Recording",
+    exploreArchive: "Explore Archive",
+    startTranslating: "Start Translating",
+    uploadFiles: "Upload Files",
     whatWouldYouLikeToDo: "What Would You Like To Do?",
-    delete: "Delete",
+    delete: "Delete"
   },
   hi: {
     signIn: "साइन इन करें",
@@ -456,8 +456,8 @@ const translations = {
     startTranslating: "अनुवाद शुरू करें",
     uploadFiles: "फ़ाइलें अपलोड करें",
     whatWouldYouLikeToDo: "आप क्या करना चाहेंगे?",
-    delete: "हटाएं",
-  },
+    delete: "हटाएं"
+  }
 };
 
 export default translations;

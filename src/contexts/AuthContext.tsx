@@ -3,6 +3,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 
+// Define the interface for user profile data
+interface UserProfile {
+  id?: string;
+  email?: string;
+  display_name?: string;
+  avatar_url?: string;
+  [key: string]: any; // Allow for additional properties
+}
+
 type AuthContextType = {
   user: User;
   login: (email: string, password: string) => Promise<void>;
@@ -106,7 +115,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       // Create a default empty object if data is null
-      const userProfile = data || {};
+      const userProfile: UserProfile = data || {};
       
       // Create user object
       setUser({
