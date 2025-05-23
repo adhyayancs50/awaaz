@@ -24,6 +24,21 @@ const VerifyPage: React.FC = () => {
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const token = queryParams.get("token");
+    const errorCode = queryParams.get("error_code");
+    const errorDescription = queryParams.get("error_description");
+    
+    // Extract email from URL if available (for resending verification)
+    const userEmail = queryParams.get("email");
+    if (userEmail) {
+      setEmail(userEmail);
+    }
+    
+    // If there are error parameters in the URL, handle them
+    if (errorCode || errorDescription) {
+      setIsVerifying(false);
+      setError(errorDescription || "Verification failed. The link may be invalid or expired.");
+      return;
+    }
     
     const verifyToken = async () => {
       if (!token) {
@@ -58,11 +73,6 @@ const VerifyPage: React.FC = () => {
     
     verifyToken();
     
-    // Extract email from URL if available (for resending verification)
-    const userEmail = queryParams.get("email");
-    if (userEmail) {
-      setEmail(userEmail);
-    }
   }, [location, verifyEmail, navigate, toast]);
   
   const handleResendVerification = async () => {
@@ -145,13 +155,15 @@ const VerifyPage: React.FC = () => {
               Resend Verification Email
             </Button>
           ) : (
-            <EmptyState
-              title="Verification Link Expired"
-              description="Your verification link has expired or is invalid. Please try signing in again to receive a new verification email."
-              actionLabel="Go to Login"
-              actionRoute="/"
-              icon={<XCircle className="h-12 w-12" />}
-            />
+            <div className="text-center space-y-4">
+              <p>Please try signing in again to receive a new verification email.</p>
+              <Button 
+                onClick={() => navigate("/")} 
+                className="bg-green-600 hover:bg-green-700"
+              >
+                Go to Login
+              </Button>
+            </div>
           )}
         </div>
       </div>
