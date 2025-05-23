@@ -43,7 +43,7 @@ export const syncRecordingsToBackend = async (recordings: Recording[]): Promise<
 
   // Update status to syncing
   const updatedRecordings = recordings.map(rec => 
-    rec.syncStatus === 'local' ? { ...rec, syncStatus: 'syncing' } : rec
+    rec.syncStatus === 'local' ? { ...rec, syncStatus: 'syncing' as const } : rec
   );
 
   // Mock API call delay
@@ -51,6 +51,6 @@ export const syncRecordingsToBackend = async (recordings: Recording[]): Promise<
   
   // After successful sync, update status to synced
   return updatedRecordings.map(rec => 
-    rec.syncStatus === 'syncing' ? { ...rec, syncStatus: 'synced' } : rec
+    rec.syncStatus === 'syncing' ? { ...rec, syncStatus: 'synced' as const } : rec
   );
 };

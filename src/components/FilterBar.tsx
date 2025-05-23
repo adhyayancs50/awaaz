@@ -12,13 +12,15 @@ interface FilterBarProps {
     contentType: ContentType | null;
     language: string | null;
     tribe: string | null;
+    threadOnly?: boolean;
   };
   availableFilters: {
     languages: string[];
     tribes: string[];
   };
-  onFilterChange: (type: "contentType" | "language" | "tribe", value: string | null) => void;
+  onFilterChange: (type: "contentType" | "language" | "tribe" | "threadOnly", value: any) => void;
   onClearFilters: () => void;
+  showThreadFilter?: boolean;
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({
@@ -27,12 +29,14 @@ const FilterBar: React.FC<FilterBarProps> = ({
   activeFilters,
   availableFilters,
   onFilterChange,
-  onClearFilters
+  onClearFilters,
+  showThreadFilter = false
 }) => {
   const hasActiveFilters = 
     activeFilters.contentType !== null || 
     activeFilters.language !== null || 
-    activeFilters.tribe !== null;
+    activeFilters.tribe !== null ||
+    (activeFilters.threadOnly === true);
     
   return (
     <div className="mb-6 space-y-3">
@@ -86,6 +90,21 @@ const FilterBar: React.FC<FilterBarProps> = ({
           >
             Songs
           </Badge>
+          
+          {showThreadFilter && (
+            <Badge
+              variant={activeFilters.threadOnly ? "default" : "outline"}
+              className="cursor-pointer hover:bg-primary/20"
+              onClick={() => 
+                onFilterChange(
+                  "threadOnly", 
+                  !activeFilters.threadOnly
+                )
+              }
+            >
+              Threads only
+            </Badge>
+          )}
           
           {availableFilters.languages.map(lang => (
             <Badge
