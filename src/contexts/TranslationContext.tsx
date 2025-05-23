@@ -5,6 +5,7 @@ type TranslationContextType = {
   t: (key: string) => string;
   changeLanguage: (lang: string) => void;
   currentLanguage: string;
+  setLanguage: (lang: string) => void; // Add this missing property
 };
 
 interface TranslationMap {
@@ -16,7 +17,8 @@ interface TranslationMap {
 const TranslationContext = createContext<TranslationContextType>({
   t: () => "",
   changeLanguage: () => {},
-  currentLanguage: "en"
+  currentLanguage: "en",
+  setLanguage: () => {} // Initialize with empty function
 });
 
 // All of our translations
@@ -42,8 +44,6 @@ const translations: TranslationMap = {
     joinAWAaz: "Join AWAaz to help preserve indigenous languages",
     loggingIn: "Logging in...",
     creating: "Creating Account...",
-    error: "Error",
-    passwordsDoNotMatch: "Passwords do not match",
     wrongCredentials: "Incorrect email or password",
     userExists: "User already exists with this email",
     welcome: "Welcome to AWAaz",
@@ -168,7 +168,6 @@ const translations: TranslationMap = {
     syncFailed: "Sync Failed",
     syncProgress: "Sync Progress",
     networkError: "Network Error",
-    retry: "Retry",
     success: "Success",
     error: "Error",
     info: "Info",
@@ -176,7 +175,6 @@ const translations: TranslationMap = {
     close: "Close",
     open: "Open",
     confirm: "Confirm",
-    cancel: "Cancel",
     apply: "Apply",
     reset: "Reset",
     clear: "Clear",
@@ -232,7 +230,6 @@ const translations: TranslationMap = {
     startTranslating: "Start Translating",
     uploadFiles: "Upload Files",
     whatWouldYouLikeToDo: "What Would You Like To Do?",
-    delete: "Delete",
     title: "Title",
     required: "Required",
     languageName: "Language Name",
@@ -246,7 +243,23 @@ const translations: TranslationMap = {
     recordingNotFound: "Recording not found",
     titleRequired: "Title is required",
     languageRequired: "Language is required",
-    startRecording: "Start Recording"
+    startRecording: "Start Recording",
+    // Added missing translations
+    dangerZone: "Danger Zone",
+    deleteAccount: "Delete Account",
+    confirmDeletion: "Confirm Deletion",
+    deleteAccountWarning: "This action cannot be undone. All your data will be permanently deleted.",
+    noDevicesLinked: "No devices linked",
+    linkedDevices: "Linked Devices",
+    receiveEmailNotifications: "Receive email notifications",
+    updatePassword: "Update Password",
+    currentPassword: "Current Password",
+    newPassword: "New Password",
+    confirmPassword: "Confirm Password",
+    updateProfile: "Update Profile",
+    displayName: "Display Name",
+    selectLanguage: "Select Language",
+    languagePreference: "Language Preference"
   },
   hi: {
     signIn: "साइन इन करें",
@@ -269,8 +282,6 @@ const translations: TranslationMap = {
     joinAWAaz: "स्वदेशी भाषाओं को संरक्षित करने में मदद करने के लिए AWAaz में शामिल हों",
     loggingIn: "लॉग इन हो रहा है...",
     creating: "खाता बना रहे हैं...",
-    error: "त्रुटि",
-    passwordsDoNotMatch: "पासवर्ड मेल नहीं खाते",
     wrongCredentials: "गलत ईमेल या पासवर्ड",
     userExists: "इस ईमेल के साथ उपयोगकर्ता पहले से मौजूद है",
     welcome: "AWAaz में आपका स्वागत है",
@@ -395,7 +406,6 @@ const translations: TranslationMap = {
     syncFailed: "सिंक विफल",
     syncProgress: "सिंक प्रगति",
     networkError: "नेटवर्क त्रुटि",
-    retry: "पुनः प्रयास करें",
     success: "सफलता",
     error: "त्रुटि",
     info: "जानकारी",
@@ -403,7 +413,6 @@ const translations: TranslationMap = {
     close: "बंद करें",
     open: "खोलें",
     confirm: "पुष्टि करें",
-    cancel: "रद्द करें",
     apply: "लागू करें",
     reset: "रीसेट करें",
     clear: "साफ़ करें",
@@ -459,7 +468,6 @@ const translations: TranslationMap = {
     startTranslating: "अनुवाद शुरू करें",
     uploadFiles: "फ़ाइलें अपलोड करें",
     whatWouldYouLikeToDo: "आप क्या करना चाहेंगे?",
-    delete: "हटाएं",
     title: "शीर्षक",
     required: "आवश्यक",
     languageName: "भाषा का नाम",
@@ -473,7 +481,22 @@ const translations: TranslationMap = {
     recordingNotFound: "रिकॉर्डिंग नहीं मिली",
     titleRequired: "शीर्षक आवश्यक है",
     languageRequired: "भाषा आवश्यक है",
-    startRecording: "रिकॉर्डिंग शुरू करें"
+    startRecording: "रिकॉर्डिंग शुरू करें",
+    // Added missing translations
+    dangerZone: "खतरनाक क्षेत्र",
+    deleteAccount: "खाता हटाएं",
+    confirmDeletion: "हटाने की पुष्टि करें",
+    deleteAccountWarning: "यह क्रिया पूर्ववत नहीं की जा सकती। आपका सभी डेटा स्थायी रूप से हटा दिया जाएगा।",
+    noDevicesLinked: "कोई डिवाइस लिंक नहीं किया गया",
+    linkedDevices: "लिंक किए गए डिवाइस",
+    receiveEmailNotifications: "ईमेल अधिसूचनाएँ प्राप्त करें",
+    updatePassword: "पासवर्ड अपडेट करें",
+    currentPassword: "वर्तमान पासवर्ड",
+    newPassword: "नया पासवर्ड",
+    updateProfile: "प्रोफ़ाइल अपडेट करें",
+    displayName: "प्रदर्शित नाम",
+    selectLanguage: "भाषा चुनें",
+    languagePreference: "भाषा वरीयता"
   }
 };
 
@@ -527,12 +550,14 @@ export const TranslationProvider: React.FC<{
     }
   };
 
+  // Provide both methods for backward compatibility
   return (
     <TranslationContext.Provider
       value={{
         t,
         changeLanguage,
         currentLanguage,
+        setLanguage: changeLanguage // Alias for changeLanguage
       }}
     >
       {children}
