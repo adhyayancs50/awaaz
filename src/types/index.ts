@@ -37,6 +37,17 @@ export interface Recording {
   userId: string;
   syncStatus: 'local' | 'syncing' | 'synced';
   imageUrl?: string;
+  // Thread-related fields
+  threadTitle?: string;
+  partNumber?: string;
+  partDescription?: string;
+  isBookmarked?: boolean;
+  isFollowed?: boolean;
+}
+
+export interface Thread {
+  title: string;
+  parts: Recording[];
 }
 
 export interface SyncOptions {

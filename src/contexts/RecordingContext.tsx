@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Recording, ContentType, TranslationLanguage } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
@@ -90,6 +91,8 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       date: new Date().toISOString(),
       syncStatus: 'local',
       userId: user.id,
+      isBookmarked: false,
+      isFollowed: false,
     };
 
     setRecordings(prev => [...prev, newRecording]);

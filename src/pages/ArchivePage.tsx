@@ -3,21 +3,30 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRecordings } from "@/contexts/RecordingContext";
 import { useToast } from "@/components/ui/use-toast";
-import { ContentType, Recording } from "@/types";
+import { ContentType, Recording, Thread } from "@/types";
 import RecordingCard from "@/components/RecordingCard";
 import EmptyState from "@/components/EmptyState";
 import FilterBar from "@/components/FilterBar";
+import { useLocation } from "react-router-dom";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useTranslation } from "@/contexts/TranslationContext";
+import ThreadView from "@/components/ThreadView";
+import { Button } from "@/components/ui/button";
+import { Bookmark, Bell, ListMusic } from "lucide-react";
 
 const ArchivePage: React.FC = () => {
   const { user } = useAuth();
   const { recordings, deleteRecording } = useRecordings();
   const { toast } = useToast();
+  const { t } = useTranslation();
+  const location = useLocation();
   
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilters, setActiveFilters] = useState({
     contentType: null as ContentType | null,
     language: null as string | null,
     tribe: null as string | null,
+    threadOnly: false,
   });
   
   const [availableFilters, setAvailableFilters] = useState({
@@ -26,6 +35,21 @@ const ArchivePage: React.FC = () => {
   });
   
   const [filteredRecordings, setFilteredRecordings] = useState<Recording[]>([]);
+  const [activeTab, setActiveTab] = useState("all");
+  const [threads, setThreads] = useState<Thread[]>([]);
+  const [selectedThread, setSelectedThread] = useState<string | null>(null);
+  
+  // Apply location state if present (for language filtering from map)
+  useEffect(() => {
+    if (location.state?.filterLanguage) {
+      setActiveFilters(prev => ({
+        ...prev,
+        language: location.state.filterLanguage
+      }));
+      // Clear location state to prevent filter persisting on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
   
   // Populate available filters from recordings
   useEffect(() => {
@@ -43,9 +67,46 @@ const ArchivePage: React.FC = () => {
     });
   }, [recordings]);
   
+  // Group recordings into threads
+  useEffect(() => {
+    const threadMap = new Map<string, Recording[]>();
+    
+    // Group recordings by thread title
+    recordings.forEach(recording => {
+      if (recording.threadTitle) {
+        if (!threadMap.has(recording.threadTitle)) {
+          threadMap.set(recording.threadTitle, [recording]);
+        } else {
+          threadMap.get(recording.threadTitle)?.push(recording);
+        }
+      }
+    });
+    
+    // Convert map to array of Thread objects
+    const threadArray: Thread[] = Array.from(threadMap).map(([title, parts]) => ({
+      title,
+      parts: parts.sort((a, b) => {
+        // Sort by part number if available, otherwise by date
+        if (a.partNumber && b.partNumber) {
+          return parseInt(a.partNumber) - parseInt(b.partNumber);
+        }
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      }),
+    }));
+    
+    setThreads(threadArray);
+  }, [recordings]);
+  
   // Apply filters and search
   useEffect(() => {
     let filtered = [...recordings];
+    
+    // Filter by active tab
+    if (activeTab === "bookmarked") {
+      filtered = filtered.filter(rec => rec.isBookmarked);
+    } else if (activeTab === "followed") {
+      filtered = filtered.filter(rec => rec.isFollowed);
+    }
     
     // Apply content type filter
     if (activeFilters.contentType) {
@@ -62,6 +123,11 @@ const ArchivePage: React.FC = () => {
       filtered = filtered.filter(rec => rec.tribe === activeFilters.tribe);
     }
     
+    // Apply thread only filter
+    if (activeFilters.threadOnly) {
+      filtered = filtered.filter(rec => rec.threadTitle);
+    }
+    
     // Apply search
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
@@ -71,16 +137,17 @@ const ArchivePage: React.FC = () => {
         (rec.tribe && rec.tribe.toLowerCase().includes(term)) ||
         (rec.region && rec.region.toLowerCase().includes(term)) ||
         (rec.speaker && rec.speaker.toLowerCase().includes(term)) ||
+        (rec.threadTitle && rec.threadTitle.toLowerCase().includes(term)) ||
         (rec.transcription && rec.transcription.toLowerCase().includes(term))
       );
     }
     
     setFilteredRecordings(filtered);
-  }, [recordings, searchTerm, activeFilters]);
+  }, [recordings, searchTerm, activeFilters, activeTab]);
   
   const handleFilterChange = (
-    type: "contentType" | "language" | "tribe", 
-    value: string | null
+    type: "contentType" | "language" | "tribe" | "threadOnly", 
+    value: any
   ) => {
     setActiveFilters(prev => ({
       ...prev,
@@ -93,6 +160,7 @@ const ArchivePage: React.FC = () => {
       contentType: null,
       language: null,
       tribe: null,
+      threadOnly: false,
     });
     setSearchTerm("");
   };
@@ -111,9 +179,122 @@ const ArchivePage: React.FC = () => {
     );
   }
   
+  // Group recordings by thread for display
+  const getGroupedContent = () => {
+    // If a specific thread is selected, return just that thread
+    if (selectedThread) {
+      return (
+        <div className="mb-6">
+          <ThreadView 
+            threadTitle={selectedThread} 
+            onClose={() => setSelectedThread(null)} 
+          />
+        </div>
+      );
+    }
+    
+    // First, display threads if we're not filtering too specifically
+    const visibleThreads = threads.filter(thread => {
+      const threadVisible = thread.parts.some(part => 
+        filteredRecordings.some(rec => rec.id === part.id)
+      );
+      return threadVisible;
+    });
+    
+    // Get recordings that are not part of any thread, or all recordings if threadOnly is false
+    const standaloneRecordings = activeFilters.threadOnly 
+      ? [] 
+      : filteredRecordings.filter(rec => !rec.threadTitle);
+    
+    return (
+      <>
+        {visibleThreads.length > 0 && (
+          <div className="mb-6 space-y-4">
+            <h2 className="text-xl font-semibold flex items-center text-green-700">
+              <ListMusic className="mr-2 h-5 w-5" />
+              {t("storyThreads")}
+            </h2>
+            
+            <div className="grid gap-4">
+              {visibleThreads.map((thread) => (
+                <div 
+                  key={thread.title}
+                  className="border rounded-lg p-4 hover:bg-green-50 transition-colors cursor-pointer"
+                  onClick={() => setSelectedThread(thread.title)}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-medium text-lg">{thread.title}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {thread.parts.length} {thread.parts.length === 1 ? t("part") : t("parts")} • {thread.parts[0].language}
+                      </p>
+                    </div>
+                    <div className="flex space-x-1">
+                      {thread.parts.some(part => part.isBookmarked) && (
+                        <Bookmark className="h-4 w-4 text-green-600" />
+                      )}
+                      {thread.parts.some(part => part.isFollowed) && (
+                        <Bell className="h-4 w-4 text-green-600" />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {standaloneRecordings.length > 0 && (
+          <div className="grid gap-6">
+            <h2 className="text-xl font-semibold text-green-700">
+              {visibleThreads.length > 0 ? t("individualRecordings") : t("recordings")}
+            </h2>
+            
+            {standaloneRecordings.map((recording) => (
+              <RecordingCard
+                key={recording.id}
+                recording={recording}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+        )}
+        
+        {visibleThreads.length === 0 && standaloneRecordings.length === 0 && (
+          <EmptyState
+            title={t("noMatchingRecordings")}
+            description={t("tryAdjustingFilters")}
+            actionLabel={t("clearFilters")}
+            actionRoute="#"
+            icon="🔍"
+            onAction={handleClearFilters}
+          />
+        )}
+      </>
+    );
+  };
+  
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6 text-center">Archive</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">{t("archive")}</h1>
+      
+      <Tabs 
+        value={activeTab} 
+        onValueChange={setActiveTab}
+        className="mb-6"
+      >
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="all">{t("allRecordings")}</TabsTrigger>
+          <TabsTrigger value="bookmarked" className="flex items-center gap-2">
+            <Bookmark className="h-4 w-4" />
+            {t("bookmarked")}
+          </TabsTrigger>
+          <TabsTrigger value="followed" className="flex items-center gap-2">
+            <Bell className="h-4 w-4" />
+            {t("followed")}
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
       
       <FilterBar
         searchTerm={searchTerm}
@@ -122,36 +303,19 @@ const ArchivePage: React.FC = () => {
         availableFilters={availableFilters}
         onFilterChange={handleFilterChange}
         onClearFilters={handleClearFilters}
+        showThreadFilter={true}
       />
       
-      {filteredRecordings.length === 0 ? (
-        recordings.length === 0 ? (
-          <EmptyState
-            title="Your archive is empty"
-            description="Start recording to preserve cultural heritage."
-            actionLabel="Record Now"
-            actionRoute="/"
-            icon="🎵"
-          />
-        ) : (
-          <EmptyState
-            title="No matching recordings"
-            description="Try adjusting your search or filters to find what you're looking for."
-            actionLabel="Clear Filters"
-            actionRoute="#"
-            icon="🔍"
-          />
-        )
+      {recordings.length === 0 ? (
+        <EmptyState
+          title={t("yourArchiveIsEmpty")}
+          description={t("startRecording")}
+          actionLabel={t("recordNow")}
+          actionRoute="/"
+          icon="🎵"
+        />
       ) : (
-        <div className="grid gap-6">
-          {filteredRecordings.map((recording) => (
-            <RecordingCard
-              key={recording.id}
-              recording={recording}
-              onDelete={handleDelete}
-            />
-          ))}
-        </div>
+        getGroupedContent()
       )}
     </div>
   );

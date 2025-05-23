@@ -12,6 +12,7 @@ import SettingsPage from "./pages/SettingsPage";
 import TranslationPage from "./pages/TranslationPage";
 import AboutPage from "./pages/AboutPage";
 import UploadPage from "./pages/UploadPage";
+import LanguageMapPage from "./pages/LanguageMapPage";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 import SplashScreen from "./components/SplashScreen";
@@ -62,6 +63,7 @@ const App = () => {
                             <Route path="/settings" element={<SettingsPage />} />
                             <Route path="/about" element={<AboutPage />} />
                             <Route path="/upload" element={<UploadPage />} />
+                            <Route path="/language-map" element={<LanguageMapPage />} />
                             <Route path="*" element={<NotFound />} />
                           </Routes>
                         </Layout>

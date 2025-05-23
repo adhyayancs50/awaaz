@@ -8,22 +8,52 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, Check } from "lucide-react";
+import { Upload, Check, Bookmark, FileText } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { ContentType } from "@/types";
 import { motion } from "framer-motion";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 
 const UploadPage: React.FC = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
-  const { addRecording } = useRecordings();
+  const { addRecording, recordings } = useRecordings();
   const { toast } = useToast();
   
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [language, setLanguage] = useState("");
+  const [region, setRegion] = useState("");
   const [contentType, setContentType] = useState<ContentType>(ContentType.WORD);
   const [uploadComplete, setUploadComplete] = useState(false);
+  
+  // New fields for storytelling threads feature
+  const [isPartOfThread, setIsPartOfThread] = useState(false);
+  const [threadTitle, setThreadTitle] = useState("");
+  const [partNumber, setPartNumber] = useState("");
+  const [partDescription, setPartDescription] = useState("");
+  const [existingThreads, setExistingThreads] = useState<string[]>([]);
+  const [selectedThread, setSelectedThread] = useState("");
+  const [isNewThread, setIsNewThread] = useState(true);
+  
+  // Get unique thread titles from existing recordings
+  React.useEffect(() => {
+    const threads = new Set<string>();
+    recordings.forEach(rec => {
+      if (rec.threadTitle && rec.userId === user?.id) {
+        threads.add(rec.threadTitle);
+      }
+    });
+    setExistingThreads(Array.from(threads));
+  }, [recordings, user]);
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -61,25 +91,61 @@ const UploadPage: React.FC = () => {
       return;
     }
     
+    // Thread validation
+    if (isPartOfThread) {
+      if (isNewThread && !threadTitle) {
+        toast({
+          title: t("error"),
+          description: t("pleaseEnterThreadTitle"),
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (!isNewThread && !selectedThread) {
+        toast({
+          title: t("error"),
+          description: t("pleaseSelectExistingThread"),
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+    
     // Create a blob URL for the audio file
     const audioUrl = URL.createObjectURL(audioFile);
     
+    // Determine thread information
+    const finalThreadTitle = isPartOfThread ? 
+      (isNewThread ? threadTitle : selectedThread) : 
+      undefined;
+    
     // Add recording to the recordings context
-    // Adding a duration property (default to 0 for uploaded files since we can't easily determine duration)
     addRecording({
       title,
       language,
       contentType,
       audioUrl,
-      duration: 0, // Adding the missing duration property
+      duration: 0,
       transcription: "",
-      translations: {}
+      translations: {},
+      region,
+      // Add thread-related fields
+      threadTitle: finalThreadTitle,
+      partNumber: isPartOfThread ? partNumber : undefined,
+      partDescription: isPartOfThread ? partDescription : undefined
     });
     
     // Reset the form and show success message
     setAudioFile(null);
     setTitle("");
     setLanguage("");
+    setRegion("");
+    setIsPartOfThread(false);
+    setThreadTitle("");
+    setPartNumber("");
+    setPartDescription("");
+    setSelectedThread("");
     setUploadComplete(true);
     
     // Reset the success message after 3 seconds
@@ -143,6 +209,17 @@ const UploadPage: React.FC = () => {
               </div>
               
               <div className="space-y-2">
+                <Label htmlFor="region">{t("region")}</Label>
+                <Input
+                  id="region"
+                  value={region}
+                  onChange={(e) => setRegion(e.target.value)}
+                  placeholder={t("enterRegionOrState")}
+                  className="border-green-200 focus:border-green-400"
+                />
+              </div>
+              
+              <div className="space-y-2">
                 <Label htmlFor="title">{t("title")}</Label>
                 <Input
                   id="title"
@@ -182,6 +259,98 @@ const UploadPage: React.FC = () => {
                     {t("song")}
                   </Button>
                 </div>
+              </div>
+              
+              <div className="space-y-2 pt-2 border-t border-green-100">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="thread-switch">{t("partOfStoryThread")}</Label>
+                  <Switch
+                    id="thread-switch"
+                    checked={isPartOfThread}
+                    onCheckedChange={setIsPartOfThread}
+                    className="data-[state=checked]:bg-green-600"
+                  />
+                </div>
+                
+                {isPartOfThread && (
+                  <div className="space-y-4 p-3 bg-green-50 rounded-md">
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={isNewThread ? "default" : "outline"}
+                        className={isNewThread ? "bg-green-600" : ""}
+                        onClick={() => setIsNewThread(true)}
+                      >
+                        {t("newThread")}
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={!isNewThread ? "default" : "outline"}
+                        className={!isNewThread ? "bg-green-600" : ""}
+                        onClick={() => setIsNewThread(false)}
+                        disabled={existingThreads.length === 0}
+                      >
+                        {t("existingThread")}
+                      </Button>
+                    </div>
+                    
+                    {isNewThread ? (
+                      <div className="space-y-2">
+                        <Label htmlFor="thread-title">{t("threadTitle")}</Label>
+                        <div className="flex items-center">
+                          <FileText className="w-4 h-4 text-green-600 mr-2" />
+                          <Input
+                            id="thread-title"
+                            value={threadTitle}
+                            onChange={(e) => setThreadTitle(e.target.value)}
+                            placeholder={t("enterThreadTitle")}
+                            className="border-green-200 focus:border-green-400"
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <Label htmlFor="existing-thread">{t("selectThread")}</Label>
+                        <Select value={selectedThread} onValueChange={setSelectedThread}>
+                          <SelectTrigger className="border-green-200 focus:border-green-400">
+                            <SelectValue placeholder={t("selectExistingThread")} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {existingThreads.map((thread) => (
+                              <SelectItem key={thread} value={thread}>
+                                {thread}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="part-number">{t("partNumber")}</Label>
+                      <Input
+                        id="part-number"
+                        value={partNumber}
+                        onChange={(e) => setPartNumber(e.target.value)}
+                        placeholder={t("enterPartNumber")}
+                        className="border-green-200 focus:border-green-400"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="part-description">{t("partDescription")}</Label>
+                      <Textarea
+                        id="part-description"
+                        value={partDescription}
+                        onChange={(e) => setPartDescription(e.target.value)}
+                        placeholder={t("enterBriefDescription")}
+                        className="border-green-200 focus:border-green-400"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
               
               <div className="space-y-2">
