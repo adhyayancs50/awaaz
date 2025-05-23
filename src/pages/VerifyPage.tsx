@@ -71,8 +71,12 @@ const VerifyPage: React.FC = () => {
       }
     };
     
-    verifyToken();
-    
+    if (token) {
+      verifyToken();
+    } else {
+      setIsVerifying(false);
+      setError("Missing verification token");
+    }
   }, [location, verifyEmail, navigate, toast]);
   
   const handleResendVerification = async () => {
