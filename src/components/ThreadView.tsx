@@ -157,7 +157,7 @@ const ThreadView: React.FC<ThreadViewProps> = ({ threadTitle, onClose }) => {
               </p>
             )}
             
-            <AudioPlayer audioUrl={activeRecording.audioUrl} autoPlay={true} />
+            <AudioPlayer audioUrl={activeRecording.audioUrl} />
             
             <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-green-100">
               <div className="flex items-center">
