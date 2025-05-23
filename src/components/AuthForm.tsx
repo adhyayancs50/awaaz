@@ -77,7 +77,7 @@ const AuthForm: React.FC = () => {
     }
     
     try {
-      // Fix: Pass user data as a single object instead of separate arguments
+      // Pass user data as a single object
       const success = await startEmailVerification({
         email: registerForm.email,
         displayName: registerForm.displayName
