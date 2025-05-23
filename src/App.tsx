@@ -13,7 +13,6 @@ import TranslationPage from "./pages/TranslationPage";
 import AboutPage from "./pages/AboutPage";
 import UploadPage from "./pages/UploadPage";
 import LanguageMapPage from "./pages/LanguageMapPage";
-import VerifyPage from "./pages/VerifyPage";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 import SplashScreen from "./components/SplashScreen";
@@ -68,7 +67,6 @@ const App = () => {
                             <Route path="/about" element={<AboutPage />} />
                             <Route path="/upload" element={<UploadPage />} />
                             <Route path="/language-map" element={<LanguageMapPage />} />
-                            <Route path="/verify" element={<VerifyPage />} />
                             <Route path="*" element={<NotFound />} />
                           </Routes>
                         </Layout>
