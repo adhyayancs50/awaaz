@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User } from "@/types";
 import { toast } from "@/components/ui/use-toast";
-import { supabase, cleanupAuthState, safeSignOut } from "@/integrations/supabase/client";
+import { supabase, cleanupAuthState, safeSignOut, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from "@/integrations/supabase/client";
 
 interface AuthContextType {
   user: User | null;
@@ -172,12 +172,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       // Call our edge function to start email verification
-      const functionsEndpoint = `${supabase.supabaseUrl}/functions/v1/send-verification-email`;
+      const functionsEndpoint = `${SUPABASE_URL}/functions/v1/send-verification-email`;
       const response = await fetch(functionsEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabase.supabaseKey}`
+          'Authorization': `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
         },
         body: JSON.stringify({ 
           email, 
@@ -264,7 +264,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     try {
       // Delete user account
-      await supabase.rpc('delete_user');
+      const { error } = await supabase.rpc('delete_user');
+      
+      if (error) throw error;
       
       // Sign out and clean up
       await safeSignOut();
