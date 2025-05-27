@@ -20,15 +20,14 @@ const VerifyPage: React.FC = () => {
   const { toast } = useToast();
   
   useEffect(() => {
-    const verifyEmailToken = async () => {
+    const handleVerification = async () => {
       const queryParams = new URLSearchParams(location.search);
       const token = queryParams.get("token");
       const type = queryParams.get("type");
       const errorCode = queryParams.get("error_code");
       const errorDescription = queryParams.get("error_description");
-      
-      // Extract email from URL if available (for resending verification)
       const userEmail = queryParams.get("email");
+      
       if (userEmail) {
         setEmail(userEmail);
       }
@@ -40,48 +39,99 @@ const VerifyPage: React.FC = () => {
         return;
       }
       
-      // If no token is present, show error
-      if (!token) {
+      // Check current session first
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.email_confirmed_at) {
         setIsVerifying(false);
-        setError("Missing verification token. Please check your email for the verification link.");
+        setIsSuccess(true);
+        toast({
+          title: "Email verified successfully",
+          description: "Your email has been verified. You can now use the site.",
+        });
         return;
       }
       
-      try {
-        console.log("Attempting to verify email with token:", token.substring(0, 10) + "...");
-        
-        // Use the correct Supabase verification method
-        const { data, error } = await supabase.auth.verifyOtp({
-          token_hash: token,
-          type: (type as any) || 'signup',
-        });
-        
-        setIsVerifying(false);
-        
-        if (error) {
-          console.error("Email verification error:", error);
-          setError(error.message || "Email verification failed. The link may be invalid or expired.");
-          return;
+      // Set up auth state listener to detect verification success
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        async (event, session) => {
+          console.log("Auth state change:", event, session?.user?.email_confirmed_at);
+          
+          if (event === 'SIGNED_IN' && session?.user) {
+            // Check if email is confirmed
+            if (session.user.email_confirmed_at) {
+              setIsVerifying(false);
+              setIsSuccess(true);
+              toast({
+                title: "Email verified successfully",
+                description: "Your email has been verified. You can now use the site.",
+              });
+            }
+          } else if (event === 'TOKEN_REFRESHED' && session?.user?.email_confirmed_at) {
+            setIsVerifying(false);
+            setIsSuccess(true);
+            toast({
+              title: "Email verified successfully",
+              description: "Your email has been verified. You can now use the site.",
+            });
+          }
         }
-        
-        if (data) {
-          console.log("Email verification successful:", data);
-          setIsSuccess(true);
-          toast({
-            title: "Email verified successfully",
-            description: "Your email has been verified. You can now use the site.",
+      );
+      
+      // If we have a token, try to verify it
+      if (token) {
+        try {
+          console.log("Attempting to verify email with token");
+          
+          const { data, error } = await supabase.auth.verifyOtp({
+            token_hash: token,
+            type: (type as any) || 'signup',
           });
+          
+          if (error) {
+            console.error("Email verification error:", error);
+            setIsVerifying(false);
+            setError(error.message || "Email verification failed. The link may be invalid or expired.");
+            subscription.unsubscribe();
+            return;
+          }
+          
+          if (data?.user?.email_confirmed_at) {
+            setIsVerifying(false);
+            setIsSuccess(true);
+            toast({
+              title: "Email verified successfully",
+              description: "Your email has been verified. You can now use the site.",
+            });
+            subscription.unsubscribe();
+          }
+          
+        } catch (err: any) {
+          console.error("Verification error:", err);
+          setIsVerifying(false);
+          setError(err.message || "Email verification failed. Please try again.");
+          subscription.unsubscribe();
         }
-        
-      } catch (err: any) {
-        console.error("Verification error:", err);
-        setIsVerifying(false);
-        setError(err.message || "Email verification failed. Please try again.");
+      } else {
+        // No token, but still wait a bit to see if auth state changes
+        setTimeout(() => {
+          setIsVerifying(false);
+          setError("Missing verification token. Please check your email for the verification link.");
+          subscription.unsubscribe();
+        }, 3000);
       }
+      
+      // Cleanup subscription after 10 seconds to avoid hanging
+      setTimeout(() => {
+        if (isVerifying) {
+          setIsVerifying(false);
+          setError("Verification timed out. Please try again.");
+        }
+        subscription.unsubscribe();
+      }, 10000);
     };
     
-    verifyEmailToken();
-  }, [location, toast]);
+    handleVerification();
+  }, [location, toast, isVerifying]);
   
   const handleResendVerification = async () => {
     if (!email) {
@@ -129,12 +179,15 @@ const VerifyPage: React.FC = () => {
       >
         <div className="max-w-md w-full bg-card rounded-xl shadow-sm p-8 text-center">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-semibold mb-2">✅ Email Verified!</h2>
+          <h2 className="text-2xl font-semibold mb-2">✅ Verification Successful!</h2>
           <p className="mb-6 text-muted-foreground">
-            Your email has been successfully verified. You can now use the site.
+            Your email has been successfully verified. You can now use all features of the site.
           </p>
-          <Button onClick={() => navigate("/")} className="bg-green-600 hover:bg-green-700">
-            Continue to Site
+          <Button 
+            onClick={() => navigate("/")} 
+            className="bg-green-600 hover:bg-green-700 w-full"
+          >
+            Continue to App
           </Button>
         </div>
       </motion.div>
@@ -159,7 +212,7 @@ const VerifyPage: React.FC = () => {
         )}
         
         <p className="mb-6 text-center text-muted-foreground">
-          Email verification failed. Please try again.
+          Email verification failed. The link may be invalid or expired.
         </p>
         
         <div className="space-y-4">
@@ -167,21 +220,23 @@ const VerifyPage: React.FC = () => {
             <Button 
               onClick={handleResendVerification} 
               className="w-full flex items-center justify-center gap-2"
+              variant="outline"
             >
-              <RefreshCcw className="h-4 w-4 mr-1" />
+              <RefreshCcw className="h-4 w-4" />
               Resend Verification Email
             </Button>
           ) : (
             <div className="text-center space-y-4">
-              <p>Please try signing up again to receive a new verification email.</p>
-              <Button 
-                onClick={() => navigate("/")} 
-                className="bg-green-600 hover:bg-green-700"
-              >
-                Go to Sign Up
-              </Button>
+              <p className="text-sm">Please try signing up again to receive a new verification email.</p>
             </div>
           )}
+          
+          <Button 
+            onClick={() => navigate("/")} 
+            className="bg-green-600 hover:bg-green-700 w-full"
+          >
+            Go to Home
+          </Button>
         </div>
       </div>
     </motion.div>
