@@ -38,6 +38,28 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
 
+  // Transform Supabase recording data to match our Recording interface
+  const transformSupabaseRecording = (supabaseRecord: any): Recording => {
+    return {
+      id: supabaseRecord.id,
+      title: supabaseRecord.title,
+      contentType: supabaseRecord.content_type as ContentType || ContentType.STORY,
+      audioUrl: supabaseRecord.audio_url,
+      duration: 0, // Default value since not stored in Supabase yet
+      date: supabaseRecord.date || supabaseRecord.created_at,
+      language: supabaseRecord.language,
+      speaker: supabaseRecord.speaker,
+      tribe: supabaseRecord.tribe,
+      region: supabaseRecord.region_id,
+      transcription: supabaseRecord.transcription,
+      translations: {}, // Default empty object
+      userId: supabaseRecord.user_id,
+      syncStatus: 'synced' as const,
+      isBookmarked: false,
+      isFollowed: false,
+    };
+  };
+
   // Load recordings from local storage on component mount
   useEffect(() => {
     const loadRecordings = () => {
@@ -77,7 +99,8 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
         const bookmarkedRecs = bookmarks
           ?.map(bookmark => bookmark.recordings)
-          .filter(Boolean) as Recording[] || [];
+          .filter(Boolean)
+          .map(transformSupabaseRecording) || [];
         
         setBookmarkedRecordings(bookmarkedRecs);
       } catch (error) {
