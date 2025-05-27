@@ -63,6 +63,95 @@ export type Database = {
         }
         Relationships: []
       }
+      recordings: {
+        Row: {
+          audio_url: string
+          content_type: string | null
+          created_at: string
+          date: string
+          id: string
+          language: string | null
+          region_id: string | null
+          speaker: string | null
+          title: string
+          transcription: string | null
+          updated_at: string
+          user_id: string
+          verified: boolean | null
+        }
+        Insert: {
+          audio_url: string
+          content_type?: string | null
+          created_at?: string
+          date?: string
+          id?: string
+          language?: string | null
+          region_id?: string | null
+          speaker?: string | null
+          title: string
+          transcription?: string | null
+          updated_at?: string
+          user_id: string
+          verified?: boolean | null
+        }
+        Update: {
+          audio_url?: string
+          content_type?: string | null
+          created_at?: string
+          date?: string
+          id?: string
+          language?: string | null
+          region_id?: string | null
+          speaker?: string | null
+          title?: string
+          transcription?: string | null
+          updated_at?: string
+          user_id?: string
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
+      translations: {
+        Row: {
+          created_at: string
+          id: string
+          recording_id: string
+          status: string | null
+          target_language: string
+          translation_text: string
+          translator_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          recording_id: string
+          status?: string | null
+          target_language: string
+          translation_text: string
+          translator_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          recording_id?: string
+          status?: string | null
+          target_language?: string
+          translation_text?: string
+          translator_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "translations_recording_id_fkey"
+            columns: ["recording_id"]
+            isOneToOne: false
+            referencedRelation: "recordings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

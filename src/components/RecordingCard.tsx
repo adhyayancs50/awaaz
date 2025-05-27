@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Recording, ContentType } from "@/types";
 import AudioPlayer from "@/components/AudioPlayer";
 import { formatDate } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface RecordingCardProps {
   recording: Recording;
@@ -14,6 +15,7 @@ interface RecordingCardProps {
 
 const RecordingCard: React.FC<RecordingCardProps> = ({ recording, onDelete }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const { user } = useAuth();
   
   const getContentTypeIcon = (type: ContentType) => {
     switch (type) {
@@ -40,6 +42,9 @@ const RecordingCard: React.FC<RecordingCardProps> = ({ recording, onDelete }) =>
         return null;
     }
   };
+
+  // Check if current user owns this recording
+  const canDelete = user && recording.userId === user.id;
   
   return (
     <Card className="overflow-hidden">
@@ -139,9 +144,11 @@ const RecordingCard: React.FC<RecordingCardProps> = ({ recording, onDelete }) =>
           {showDetails ? "Show Less" : "Show Details"}
         </Button>
         
-        <Button variant="ghost" size="sm" className="text-destructive" onClick={() => onDelete(recording.id)}>
-          Delete
-        </Button>
+        {canDelete && (
+          <Button variant="ghost" size="sm" className="text-destructive" onClick={() => onDelete(recording.id)}>
+            Delete
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

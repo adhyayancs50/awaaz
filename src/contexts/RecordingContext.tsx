@@ -12,7 +12,7 @@ interface RecordingContextType {
   deleteRecording: (id: string) => void;
   isLoading: boolean;
   syncRecordings: () => Promise<void>;
-  getStats: () => { languages: number, recordings: number, contributors: number };
+  getStats: () => { languages: number, recordings: number, contributors: number, regions: number };
 }
 
 const RecordingContext = createContext<RecordingContextType>({
@@ -23,7 +23,7 @@ const RecordingContext = createContext<RecordingContextType>({
   deleteRecording: () => {},
   isLoading: true,
   syncRecordings: async () => {},
-  getStats: () => ({ languages: 0, recordings: 0, contributors: 0 }),
+  getStats: () => ({ languages: 0, recordings: 0, contributors: 0, regions: 0 }),
 });
 
 export const useRecordings = () => useContext(RecordingContext);
@@ -68,10 +68,16 @@ export const RecordingProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       .filter(rec => rec.userId && rec.userId.trim() !== "")
       .map(rec => rec.userId));
     
+    // Fix regions count - get unique regions from all recordings
+    const regions = new Set(recordings
+      .filter(rec => rec.region && rec.region.trim() !== "")
+      .map(rec => rec.region?.toLowerCase().trim()));
+    
     return {
       languages: languages.size,
       recordings: recordings.length,
-      contributors: uniqueContributors.size
+      contributors: uniqueContributors.size,
+      regions: regions.size // Fixed to show actual region count
     };
   };
 

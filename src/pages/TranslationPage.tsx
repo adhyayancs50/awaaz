@@ -31,7 +31,8 @@ const TranslationPage: React.FC = () => {
   const [translationText, setTranslationText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [availableRecordings, setAvailableRecordings] = useState<Recording[]>([]);
-  const [activeTab, setActiveTab] = useState<"available" | "myTasks" | "completed">("available");
+  const [completedTranslations, setCompletedTranslations] = useState<Recording[]>([]);
+  const [activeTab, setActiveTab] = useState<"available" | "completed">("available");
   
   // Filter recordings that are available for translation
   useEffect(() => {
@@ -58,6 +59,21 @@ const TranslationPage: React.FC = () => {
       setTranslationText("");
     }
   }, [recordings, user, targetLanguage]);
+
+  // Get completed translations by current user
+  useEffect(() => {
+    if (!user) return;
+    
+    const userCompletedTranslations = recordings.filter(recording => {
+      // Check if user has completed a translation for this recording
+      return recording.translations && 
+             Object.entries(recording.translations).some(([lang, text]) => 
+               text && text.trim() !== "" // User has provided a translation
+             );
+    });
+    
+    setCompletedTranslations(userCompletedTranslations);
+  }, [recordings, user]);
   
   const selectedRecording = selectedRecordingId 
     ? recordings.find(rec => rec.id === selectedRecordingId) 
@@ -67,7 +83,7 @@ const TranslationPage: React.FC = () => {
     if (!selectedRecording || !translationText.trim()) {
       toast({
         title: t("error"),
-        description: t("selectRecordingAndEnterTranslation"),
+        description: "Please select a recording and enter translation",
         variant: "destructive",
       });
       return;
@@ -150,18 +166,12 @@ const TranslationPage: React.FC = () => {
       
       <Card className="mb-6 shadow-md border-green-100 overflow-hidden">
         <Tabs defaultValue="available" className="w-full" onValueChange={(value) => setActiveTab(value as any)}>
-          <TabsList className="grid w-full grid-cols-3 bg-neutral-light">
+          <TabsList className="grid w-full grid-cols-2 bg-neutral-light">
             <TabsTrigger 
               value="available"
               className="data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm"
             >
               {t("availableTasks")}
-            </TabsTrigger>
-            <TabsTrigger 
-              value="myTasks"
-              className="data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm"
-            >
-              {t("myTasks")}
             </TabsTrigger>
             <TabsTrigger 
               value="completed"
@@ -194,12 +204,31 @@ const TranslationPage: React.FC = () => {
             )}
           </TabsContent>
           
-          <TabsContent value="myTasks" className="p-4">
-            <p className="text-muted-foreground text-center py-6">{t("noAssignedTranslations")}</p>
-          </TabsContent>
-          
           <TabsContent value="completed" className="p-4">
-            <p className="text-muted-foreground text-center py-6">{t("noCompletedTranslations")}</p>
+            {completedTranslations.length > 0 ? (
+              <div className="space-y-4">
+                {completedTranslations.map(recording => (
+                  <Card key={recording.id} className="border-green-100">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm">{recording.title}</CardTitle>
+                      <CardDescription className="text-xs">
+                        {recording.language && `${t("language")}: ${recording.language}`}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      {recording.translations && Object.entries(recording.translations).map(([lang, text]) => (
+                        <div key={lang} className="mb-2">
+                          <p className="text-xs font-semibold text-green-700 uppercase">{lang}:</p>
+                          <p className="text-xs bg-green-50 p-2 rounded border">{text}</p>
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-center py-6">{t("noCompletedTranslations")}</p>
+            )}
           </TabsContent>
         </Tabs>
       </Card>
