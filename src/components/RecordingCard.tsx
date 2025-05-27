@@ -7,6 +7,8 @@ import { Recording, ContentType } from "@/types";
 import AudioPlayer from "@/components/AudioPlayer";
 import { formatDate } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRecordings } from "@/contexts/RecordingContext";
+import { Bookmark, BookmarkCheck } from "lucide-react";
 
 interface RecordingCardProps {
   recording: Recording;
@@ -16,6 +18,7 @@ interface RecordingCardProps {
 const RecordingCard: React.FC<RecordingCardProps> = ({ recording, onDelete }) => {
   const [showDetails, setShowDetails] = useState(false);
   const { user } = useAuth();
+  const { bookmarkedRecordings, toggleBookmark } = useRecordings();
   
   const getContentTypeIcon = (type: ContentType) => {
     switch (type) {
@@ -46,6 +49,9 @@ const RecordingCard: React.FC<RecordingCardProps> = ({ recording, onDelete }) =>
   // Check if current user owns this recording
   const canDelete = user && recording.userId === user.id;
   
+  // Check if recording is bookmarked
+  const isBookmarked = bookmarkedRecordings.some(rec => rec.id === recording.id);
+  
   return (
     <Card className="overflow-hidden">
       <CardHeader className="pb-2">
@@ -54,7 +60,23 @@ const RecordingCard: React.FC<RecordingCardProps> = ({ recording, onDelete }) =>
             <span>{getContentTypeIcon(recording.contentType)}</span>
             <span>{recording.title}</span>
           </CardTitle>
-          {getSyncStatusBadge(recording.syncStatus)}
+          <div className="flex items-center gap-2">
+            {user && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => toggleBookmark(recording.id)}
+                className="p-1 h-8 w-8"
+              >
+                {isBookmarked ? (
+                  <BookmarkCheck className="h-4 w-4 text-green-600" />
+                ) : (
+                  <Bookmark className="h-4 w-4" />
+                )}
+              </Button>
+            )}
+            {getSyncStatusBadge(recording.syncStatus)}
+          </div>
         </div>
       </CardHeader>
       

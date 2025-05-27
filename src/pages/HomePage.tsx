@@ -201,7 +201,7 @@ const HomePage: React.FC = () => {
               <div className={`p-5 bg-neutral-surface dark:bg-neutral-dark/50 rounded-lg ${isMobile ? 'col-span-2' : ''}`}>
                 <Map className="h-8 w-8 text-primary-600 dark:text-primary-400 mx-auto mb-3" />
                 <p className="text-3xl font-bold text-primary-600 dark:text-primary-400">
-                  {stats.contributors}
+                  {stats.regions}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
                   {t("regionsCovered")}

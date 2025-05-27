@@ -22,7 +22,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { motion } from "framer-motion";
-import { Bell, Lock, LogOut, User, Smartphone, Languages } from "lucide-react";
+import { Bell, Lock, LogOut, User, Languages } from "lucide-react";
 
 const SettingsPage = () => {
   const { user, updateDisplayName, deleteAccount, logout, isLoading, updatePassword } = useAuth();
@@ -246,19 +246,6 @@ const SettingsPage = () => {
               onCheckedChange={setReceiveNotifications}
             />
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Linked Devices Section */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Smartphone className="h-5 w-5 text-primary-600" />
-            {t("linkedDevices")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <p className="text-muted-foreground">{t("noDevicesLinked")}</p>
         </CardContent>
       </Card>
 

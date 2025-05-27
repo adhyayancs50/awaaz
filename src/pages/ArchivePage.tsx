@@ -12,11 +12,11 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useTranslation } from "@/contexts/TranslationContext";
 import ThreadView from "@/components/ThreadView";
 import { Button } from "@/components/ui/button";
-import { Bookmark, Bell, ListMusic } from "lucide-react";
+import { Bookmark, ListMusic } from "lucide-react";
 
 const ArchivePage: React.FC = () => {
   const { user } = useAuth();
-  const { recordings, deleteRecording } = useRecordings();
+  const { recordings, bookmarkedRecordings, deleteRecording } = useRecordings();
   const { toast } = useToast();
   const { t } = useTranslation();
   const location = useLocation();
@@ -101,11 +101,9 @@ const ArchivePage: React.FC = () => {
   useEffect(() => {
     let filtered = [...recordings];
     
-    // Filter by active tab
+    // Filter by active tab - removed "followed" logic
     if (activeTab === "bookmarked") {
-      filtered = filtered.filter(rec => rec.isBookmarked);
-    } else if (activeTab === "followed") {
-      filtered = filtered.filter(rec => rec.isFollowed);
+      filtered = bookmarkedRecordings;
     }
     
     // Apply content type filter
@@ -143,7 +141,7 @@ const ArchivePage: React.FC = () => {
     }
     
     setFilteredRecordings(filtered);
-  }, [recordings, searchTerm, activeFilters, activeTab]);
+  }, [recordings, bookmarkedRecordings, searchTerm, activeFilters, activeTab]);
   
   const handleFilterChange = (
     type: "contentType" | "language" | "tribe" | "threadOnly", 
@@ -230,11 +228,8 @@ const ArchivePage: React.FC = () => {
                       </p>
                     </div>
                     <div className="flex space-x-1">
-                      {thread.parts.some(part => part.isBookmarked) && (
+                      {thread.parts.some(part => bookmarkedRecordings.some(bm => bm.id === part.id)) && (
                         <Bookmark className="h-4 w-4 text-green-600" />
-                      )}
-                      {thread.parts.some(part => part.isFollowed) && (
-                        <Bell className="h-4 w-4 text-green-600" />
                       )}
                     </div>
                   </div>
@@ -283,15 +278,11 @@ const ArchivePage: React.FC = () => {
         onValueChange={setActiveTab}
         className="mb-6"
       >
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="all">{t("allRecordings")}</TabsTrigger>
           <TabsTrigger value="bookmarked" className="flex items-center gap-2">
             <Bookmark className="h-4 w-4" />
             {t("bookmarked")}
-          </TabsTrigger>
-          <TabsTrigger value="followed" className="flex items-center gap-2">
-            <Bell className="h-4 w-4" />
-            {t("followed")}
           </TabsTrigger>
         </TabsList>
       </Tabs>
